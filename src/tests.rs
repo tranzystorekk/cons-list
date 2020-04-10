@@ -9,6 +9,21 @@ fn new_list_is_empty() {
 }
 
 #[test]
+fn head_and_tail_can_be_consed_together() {
+    let mut l: List<i32> = List::new();
+
+    l.push(1);
+    l.push(2);
+    l.push(3);
+
+    let consed = List::from_cons(4, l);
+
+    let collected: Vec<i32> = consed.into_iter().collect();
+
+    assert_eq!(collected, vec![4, 3, 2, 1]);
+}
+
+#[test]
 fn empty_list_is_zero_len() {
     let l: List<()> = List::new();
 

@@ -30,6 +30,15 @@ impl<T> List<T> {
         List { head: None }
     }
 
+    pub fn from_cons(head: T, mut tail: List<T>) -> Self {
+        let head = Node {
+            value: head,
+            next: tail.head.take(),
+        };
+
+        List { head: Some(Box::new(head)) }
+    }
+
     pub fn is_empty(&self) -> bool {
         matches!(self.head, None)
     }
