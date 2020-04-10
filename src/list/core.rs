@@ -1,3 +1,5 @@
+use crate::list::cons::Cons;
+
 use std::iter::FusedIterator;
 
 struct Node<T> {
@@ -11,11 +13,6 @@ pub struct List<T> {
     head: Link<T>,
 }
 
-pub enum Cons<T> {
-    Cons(T, List<T>),
-    Nil,
-}
-
 pub struct Iter<'a, T> {
     current_node: Option<&'a Node<T>>,
 }
@@ -26,26 +23,6 @@ pub struct IterMut<'a, T> {
 
 pub struct IntoIter<T> {
     list: List<T>,
-}
-
-impl<T> Cons<T> {
-    pub fn is_nil(&self) -> bool {
-        matches!(self, Cons::Nil)
-    }
-
-    pub fn head(self) -> Option<T> {
-        match self {
-            Cons::Cons(head, _) => Some(head),
-            _ => None,
-        }
-    }
-
-    pub fn tail(self) -> Option<List<T>> {
-        match self {
-            Cons::Cons(_, tail) if !tail.is_empty() => Some(tail),
-            _ => None,
-        }
-    }
 }
 
 impl<T> List<T> {
