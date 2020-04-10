@@ -6,6 +6,10 @@ pub enum Cons<T> {
 }
 
 impl<T> Cons<T> {
+    pub fn is_cons(&self) -> bool {
+        matches!(self, Cons::Cons(_, _))
+    }
+
     pub fn is_nil(&self) -> bool {
         matches!(self, Cons::Nil)
     }
