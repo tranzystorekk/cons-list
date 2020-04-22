@@ -56,6 +56,10 @@ impl<T> List<T> {
         self.pop_node().map(|node| node.value)
     }
 
+    pub fn clear(&mut self) {
+        while let Some(_) = self.pop_node() {}
+    }
+
     pub fn len(&self) -> usize {
         self.iter().count()
     }
