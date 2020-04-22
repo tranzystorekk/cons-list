@@ -9,6 +9,51 @@ fn new_list_is_empty() {
 }
 
 #[test]
+fn list_head_can_be_peeked() {
+    let mut l: List<i32> = List::new();
+
+    l.push(1);
+
+    assert_eq!(l.peek(), Some(&1));
+}
+
+#[test]
+fn list_last_can_be_peeked() {
+    let mut l: List<i32> = List::new();
+
+    l.push(1);
+    l.push(2);
+    l.push(3);
+
+    assert_eq!(l.peek_last(), Some(&1));
+}
+
+#[test]
+fn list_head_can_be_mutably_peeked() {
+    let mut l: List<i32> = List::new();
+
+    l.push(1);
+    l.push(2);
+    l.push(3);
+    l.peek_mut().into_iter().for_each(|v| *v += 5);
+
+    assert_eq!(l.peek(), Some(&8));
+}
+
+#[test]
+fn list_last_can_be_mutably_peeked() {
+    let mut l: List<i32> = List::new();
+
+    l.push(1);
+    l.push(2);
+    l.push(3);
+
+    l.peek_last_mut().into_iter().for_each(|v| *v += 5);
+
+    assert_eq!(l.peek_last(), Some(&6));
+}
+
+#[test]
 fn head_and_tail_can_be_consed_together() {
     let mut l: List<i32> = List::new();
 
