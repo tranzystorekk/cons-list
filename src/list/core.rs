@@ -189,5 +189,5 @@ impl<T> Iterator for IntoIter<T> {
     }
 }
 
-impl<'a, T> FusedIterator for Iter<'a, T> {}
+impl<T> FusedIterator for Iter<'_, T> {}
 impl<T> FusedIterator for IntoIter<T> {}
