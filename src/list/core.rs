@@ -2,6 +2,36 @@ use crate::list::cons::Cons;
 
 use std::iter::FusedIterator;
 
+#[macro_export]
+macro_rules! linked_list {
+    () => {
+        $crate::List::new()
+    };
+    ($el:expr; $n:expr) => {
+        {
+            let e = $el;
+            let size = $n;
+            let mut result = $crate::List::new();
+            for _ in 0..size {
+                result.push(e);
+            }
+
+            result
+        }
+    };
+    ($($x:expr),+ $(,)?) => {
+        {
+            let mut result = $crate::List::new();
+            let order = [$($x),+].iter().cloned().rev();
+            for el in order {
+                result.push(el);
+            }
+
+            result
+        }
+    };
+}
+
 struct Node<T> {
     value: T,
     next: Link<T>,
@@ -36,7 +66,9 @@ impl<T> List<T> {
             next: tail.head.take(),
         };
 
-        List { head: Some(Box::new(head)) }
+        List {
+            head: Some(Box::new(head)),
+        }
     }
 
     pub fn is_empty(&self) -> bool {
@@ -83,7 +115,7 @@ impl<T> List<T> {
 
         while let Some(node) = cur.take() {
             if node.next.is_none() {
-                return Some(&mut node.value)
+                return Some(&mut node.value);
             }
 
             cur = node.next.as_mut();
