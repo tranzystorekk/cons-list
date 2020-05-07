@@ -13,7 +13,7 @@ macro_rules! linked_list {
             let size = $n;
             let mut result = $crate::List::new();
             for _ in 0..size {
-                result.push(e);
+                result.push(e.clone());
             }
 
             result
