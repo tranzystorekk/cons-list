@@ -1,4 +1,4 @@
-use crate::linked_list;
+use crate::{linked_list, head_matches};
 use crate::Cons;
 use crate::List;
 
@@ -129,4 +129,11 @@ fn list_can_be_transformed_into_iterator() {
     let collected: Vec<i32> = l.into_iter().collect();
 
     assert_eq!(collected, vec![1, 2, 3]);
+}
+
+#[test]
+fn cons_head_matches() {
+    let l = linked_list![Some(1), None, Some(3)];
+
+    assert!(head_matches!(l.cons(), Some(1)));
 }
