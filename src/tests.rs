@@ -123,6 +123,30 @@ fn list_can_be_mutably_iterated() {
 }
 
 #[test]
+fn list_can_be_looped_over() {
+    let l = linked_list![1, 2 ,3];
+
+    let mut x = [1, 2, 3].iter();
+
+    for el in &l {
+        assert_eq!(el, x.next().unwrap());
+    }
+}
+
+#[test]
+fn list_can_be_mutably_looped_over() {
+    let mut l = linked_list![1, 2 ,3];
+
+    for el in &mut l {
+        *el *= 2;
+    }
+
+    let collected: Vec<i32> = l.iter().copied().collect();
+
+    assert_eq!(collected, vec![2, 4, 6]);
+}
+
+#[test]
 fn list_can_be_transformed_into_iterator() {
     let l = linked_list![1, 2, 3];
 
