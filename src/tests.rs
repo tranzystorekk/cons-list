@@ -1,6 +1,6 @@
-use crate::{linked_list, head_matches};
 use crate::Cons;
 use crate::List;
+use crate::{head_matches, linked_list};
 
 #[test]
 fn new_list_is_empty() {
@@ -124,7 +124,7 @@ fn list_can_be_mutably_iterated() {
 
 #[test]
 fn list_can_be_looped_over() {
-    let l = linked_list![1, 2 ,3];
+    let l = linked_list![1, 2, 3];
 
     let mut x = [1, 2, 3].iter();
 
@@ -135,7 +135,7 @@ fn list_can_be_looped_over() {
 
 #[test]
 fn list_can_be_mutably_looped_over() {
-    let mut l = linked_list![1, 2 ,3];
+    let mut l = linked_list![1, 2, 3];
 
     for el in &mut l {
         *el *= 2;
