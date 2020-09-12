@@ -1,7 +1,8 @@
+mod cons;
 mod list;
 
-pub use list::cons::Cons;
-pub use list::core::List;
+pub use cons::Cons;
+pub use list::List;
 
 #[cfg(test)]
 mod tests;

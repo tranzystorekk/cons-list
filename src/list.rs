@@ -1,4 +1,4 @@
-use crate::list::cons::Cons;
+use crate::cons::Cons;
 
 use std::iter::FusedIterator;
 

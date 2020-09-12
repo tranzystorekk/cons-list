@@ -1,4 +1,4 @@
-use crate::list::core::List;
+use crate::list::List;
 
 macro_rules! head_method_body {
     ($myself:ident) => {
