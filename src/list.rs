@@ -1,5 +1,6 @@
 use crate::cons::Cons;
 
+use std::fmt;
 use std::iter::FusedIterator;
 
 #[macro_export]
@@ -191,6 +192,12 @@ impl<T: PartialEq> List<T> {
         }
 
         false
+    }
+}
+
+impl<T: fmt::Debug> fmt::Debug for List<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_list().entries(self).finish()
     }
 }
 
