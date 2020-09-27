@@ -13,32 +13,32 @@ fn new_list_is_empty() {
 fn list_head_can_be_peeked() {
     let l = linked_list![1, 2, 3];
 
-    assert_eq!(l.peek(), Some(&1));
+    assert_eq!(l.head(), Some(&1));
 }
 
 #[test]
 fn list_last_can_be_peeked() {
     let l = linked_list![1, 2, 3];
 
-    assert_eq!(l.peek_last(), Some(&3));
+    assert_eq!(l.last(), Some(&3));
 }
 
 #[test]
 fn list_head_can_be_mutably_peeked() {
     let mut l = linked_list![1, 2, 3];
 
-    l.peek_mut().into_iter().for_each(|v| *v += 5);
+    l.head_mut().into_iter().for_each(|v| *v += 5);
 
-    assert_eq!(l.peek(), Some(&6));
+    assert_eq!(l.head(), Some(&6));
 }
 
 #[test]
 fn list_last_can_be_mutably_peeked() {
     let mut l = linked_list![1, 2, 3];
 
-    l.peek_last_mut().into_iter().for_each(|v| *v += 5);
+    l.last_mut().into_iter().for_each(|v| *v += 5);
 
-    assert_eq!(l.peek_last(), Some(&8));
+    assert_eq!(l.last(), Some(&8));
 }
 
 #[test]

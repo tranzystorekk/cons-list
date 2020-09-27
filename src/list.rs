@@ -92,15 +92,15 @@ impl<T> List<T> {
         while let Some(_) = self.pop_node() {}
     }
 
-    pub fn peek(&self) -> Option<&T> {
+    pub fn head(&self) -> Option<&T> {
         self.head.as_ref().map(|node| &node.value)
     }
 
-    pub fn peek_mut(&mut self) -> Option<&mut T> {
+    pub fn head_mut(&mut self) -> Option<&mut T> {
         self.head.as_mut().map(|node| &mut node.value)
     }
 
-    pub fn peek_last(&self) -> Option<&T> {
+    pub fn last(&self) -> Option<&T> {
         let mut cur = self.head.as_ref();
 
         while let next @ Some(_) = cur.map(|node| node.next.as_ref()).flatten() {
@@ -110,7 +110,7 @@ impl<T> List<T> {
         cur.map(|node| &node.value)
     }
 
-    pub fn peek_last_mut(&mut self) -> Option<&mut T> {
+    pub fn last_mut(&mut self) -> Option<&mut T> {
         let mut cur = self.head.as_mut();
 
         while let Some(node) = cur.take() {
@@ -146,10 +146,6 @@ impl<T> List<T> {
 
     pub fn len(&self) -> usize {
         self.iter().count()
-    }
-
-    pub fn head(&self) -> Option<&T> {
-        self.head.as_ref().map(|node| &node.value)
     }
 
     pub fn cons(mut self) -> Cons<T> {
