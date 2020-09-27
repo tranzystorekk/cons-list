@@ -124,6 +124,26 @@ impl<T> List<T> {
         None
     }
 
+    pub fn append(&mut self, elem: T) {
+        let new_node = Node {
+            value: elem,
+            next: None,
+        };
+        let new_packed = Some(Box::new(new_node));
+        let mut cur = self.head.as_mut();
+
+        while let Some(node) = cur.take() {
+            if node.next.is_none() {
+                node.next = new_packed;
+                return;
+            }
+
+            cur = node.next.as_mut();
+        }
+
+        self.head = new_packed;
+    }
+
     pub fn len(&self) -> usize {
         self.iter().count()
     }

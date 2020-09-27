@@ -42,6 +42,19 @@ fn list_last_can_be_mutably_peeked() {
 }
 
 #[test]
+fn list_can_be_appended_to() {
+    let mut l = linked_list!(1, 2, 3);
+
+    l.append(4);
+
+    assert_eq!(l.pop(), Some(1));
+    assert_eq!(l.pop(), Some(2));
+    assert_eq!(l.pop(), Some(3));
+    assert_eq!(l.pop(), Some(4));
+    assert_eq!(l.pop(), None);
+}
+
+#[test]
 fn head_and_tail_can_be_consed_together() {
     let l = linked_list![3, 2, 1];
 
