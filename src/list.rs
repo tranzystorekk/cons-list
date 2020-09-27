@@ -253,4 +253,5 @@ impl<T> Iterator for IntoIter<T> {
 }
 
 impl<T> FusedIterator for Iter<'_, T> {}
+impl<T> FusedIterator for IterMut<'_, T> {}
 impl<T> FusedIterator for IntoIter<T> {}
