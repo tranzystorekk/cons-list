@@ -103,11 +103,15 @@ impl<T> List<T> {
     pub fn last(&self) -> Option<&T> {
         let mut cur = self.head.as_ref();
 
-        while let next @ Some(_) = cur.map(|node| node.next.as_ref()).flatten() {
-            cur = next;
+        while let Some(node) = cur {
+            if node.next.is_none() {
+                return Some(&node.value);
+            }
+
+            cur = node.next.as_ref();
         }
 
-        cur.map(|node| &node.value)
+        None
     }
 
     pub fn last_mut(&mut self) -> Option<&mut T> {
