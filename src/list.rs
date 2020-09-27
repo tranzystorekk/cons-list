@@ -181,17 +181,7 @@ impl<T> List<T> {
 
 impl<T: PartialEq> List<T> {
     pub fn contains(&self, x: &T) -> bool {
-        let mut cur = self.head.as_ref();
-
-        while let Some(node) = cur {
-            if node.value == *x {
-                return true;
-            }
-
-            cur = node.next.as_ref();
-        }
-
-        false
+        self.iter().any(|el| el == x)
     }
 }
 
