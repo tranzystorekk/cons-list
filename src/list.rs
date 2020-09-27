@@ -1,4 +1,4 @@
-use crate::cons::Cons;
+use crate::cons::{Cons, LCons};
 
 use std::fmt;
 use std::iter::FusedIterator;
@@ -133,7 +133,7 @@ impl<T> List<T> {
         self.iter().count()
     }
 
-    pub fn cons(mut self) -> Cons<T> {
+    pub fn cons(mut self) -> LCons<T> {
         match self.head.take() {
             Some(node) => {
                 let tail = List { head: node.next };

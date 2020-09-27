@@ -28,12 +28,14 @@ macro_rules! head_matches {
     };
 }
 
-pub enum Cons<T> {
-    Cons(T, List<T>),
+pub type LCons<T> = Cons<T, List<T>>;
+
+pub enum Cons<T, L> {
+    Cons(T, L),
     Nil,
 }
 
-impl<T> Cons<T> {
+impl<T> Cons<T, List<T>> {
     pub fn is_cons(&self) -> bool {
         matches!(self, Cons::Cons(_, _))
     }
@@ -64,5 +66,12 @@ impl<T> Cons<T> {
 
     pub fn as_mut_tail(&mut self) -> Option<&mut List<T>> {
         tail_method_body!(self)
+    }
+
+    pub fn as_ref(&self) -> Cons<&T, &List<T>> {
+        match *self {
+            Cons::Cons(ref head, ref tail) => Cons::Cons(head, tail),
+            _ => Cons::Nil,
+        }
     }
 }
