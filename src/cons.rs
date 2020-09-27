@@ -36,14 +36,6 @@ pub enum Cons<T, L> {
 }
 
 impl<T> Cons<T, List<T>> {
-    pub fn is_cons(&self) -> bool {
-        matches!(self, Cons::Cons(_, _))
-    }
-
-    pub fn is_nil(&self) -> bool {
-        matches!(self, Cons::Nil)
-    }
-
     pub fn head(self) -> Option<T> {
         head_method_body!(self)
     }
@@ -73,5 +65,15 @@ impl<T> Cons<T, List<T>> {
             Cons::Cons(ref head, ref tail) => Cons::Cons(head, tail),
             _ => Cons::Nil,
         }
+    }
+}
+
+impl<T, L> Cons<T, L> {
+    pub fn is_cons(&self) -> bool {
+        matches!(self, Cons::Cons(_, _))
+    }
+
+    pub fn is_nil(&self) -> bool {
+        matches!(self, Cons::Nil)
     }
 }
