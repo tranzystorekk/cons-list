@@ -102,31 +102,11 @@ impl<T> List<T> {
     }
 
     pub fn last(&self) -> Option<&T> {
-        let mut cur = self.head.as_ref();
-
-        while let Some(node) = cur {
-            if node.next.is_none() {
-                return Some(&node.value);
-            }
-
-            cur = node.next.as_ref();
-        }
-
-        None
+        self.iter().last()
     }
 
     pub fn last_mut(&mut self) -> Option<&mut T> {
-        let mut cur = self.head.as_mut();
-
-        while let Some(node) = cur.take() {
-            if node.next.is_none() {
-                return Some(&mut node.value);
-            }
-
-            cur = node.next.as_mut();
-        }
-
-        None
+        self.iter_mut().last()
     }
 
     pub fn append(&mut self, elem: T) {
