@@ -174,3 +174,17 @@ fn cons_head_matches() {
 
     assert!(head_matches!(l.cons(), Some(1)));
 }
+
+#[test]
+fn contains_finds_existing_elements() {
+    let l = linked_list![1, 2, 3, 4];
+
+    assert!(l.contains(&3));
+}
+
+#[test]
+fn contains_fails_to_find_non_existing_elements() {
+    let l = linked_list![1, 2, 3, 4];
+
+    assert!(!l.contains(&10));
+}
