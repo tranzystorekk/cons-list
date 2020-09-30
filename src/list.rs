@@ -151,6 +151,19 @@ impl<T> List<T> {
         IterMut::from(self)
     }
 
+    pub fn reverse(&mut self) {
+        let head_node = self.head.as_deref();
+        if matches!(head_node, Some(&Node { next: None, .. }) | None) {
+            return;
+        }
+
+        let mut cur = self.head.take();
+        while let Some(mut node) = cur {
+            cur = std::mem::replace(&mut node.next, self.head.take());
+            self.head.replace(node);
+        }
+    }
+
     fn pop_node(&mut self) -> Link<T> {
         self.head.take().map(|mut node| {
             self.head = node.next.take();

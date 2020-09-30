@@ -188,3 +188,32 @@ fn contains_fails_to_find_non_existing_elements() {
 
     assert!(!l.contains(&10));
 }
+
+#[test]
+fn reverse_works_on_regular_lists() {
+    let mut l = linked_list![1, 2, 3, 4, 5];
+
+    l.reverse();
+
+    let expected = [5, 4, 3, 2, 1].iter();
+    assert!(l.iter().eq(expected));
+}
+
+#[test]
+fn reverse_works_on_one_element_lists() {
+    let mut l = linked_list![1];
+
+    l.reverse();
+
+    let expexted = [1].iter();
+    assert!(l.iter().eq(expexted));
+}
+
+#[test]
+fn reverse_works_on_empty_lists() {
+    let mut l: List<i32> = linked_list![];
+
+    l.reverse();
+
+    assert!(l.is_empty());
+}
