@@ -220,7 +220,7 @@ impl<'a, T> IntoIterator for &'a mut List<T> {
 impl<'a, T> Iter<'a, T> {
     pub fn from(list: &'a List<T>) -> Self {
         Iter {
-            current_node: list.head.as_ref().map(|node| &**node),
+            current_node: list.head.as_deref(),
         }
     }
 }
@@ -228,7 +228,7 @@ impl<'a, T> Iter<'a, T> {
 impl<'a, T> IterMut<'a, T> {
     pub fn from(list: &'a mut List<T>) -> Self {
         IterMut {
-            current_node: list.head.as_mut().map(|node| &mut **node),
+            current_node: list.head.as_deref_mut(),
         }
     }
 }
@@ -238,7 +238,7 @@ impl<'a, T> Iterator for Iter<'a, T> {
 
     fn next(&mut self) -> Option<Self::Item> {
         self.current_node.map(|node| {
-            self.current_node = node.next.as_ref().map(|node| &**node);
+            self.current_node = node.next.as_deref();
 
             &node.value
         })
@@ -250,7 +250,7 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 
     fn next(&mut self) -> Option<Self::Item> {
         self.current_node.take().map(|node| {
-            self.current_node = node.next.as_mut().map(|node| &mut **node);
+            self.current_node = node.next.as_deref_mut();
 
             &mut node.value
         })
