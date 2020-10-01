@@ -205,8 +205,8 @@ fn reverse_works_on_one_element_lists() {
 
     l.reverse();
 
-    let expexted = [1].iter();
-    assert!(l.iter().eq(expexted));
+    let expected = [1].iter();
+    assert!(l.iter().eq(expected));
 }
 
 #[test]
