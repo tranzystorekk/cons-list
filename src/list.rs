@@ -115,18 +115,31 @@ impl<T> List<T> {
             next: None,
         };
         let new_packed = Some(Box::new(new_node));
-        let mut cur = self.head.as_mut();
 
-        while let Some(node) = cur.take() {
-            if node.next.is_none() {
-                node.next = new_packed;
-                return;
-            }
+        match self.last_node_mut() {
+            Some(node) => node.next = new_packed,
+            _ => self.head = new_packed,
+        }
+    }
 
-            cur = node.next.as_mut();
+    pub fn append(&mut self, mut other: List<T>) {
+        if other.is_empty() {
+            return;
         }
 
-        self.head = new_packed;
+        let other_head = other.head.take();
+
+        match self.last_node_mut() {
+            Some(node) => node.next = other_head,
+            _ => self.head = other_head,
+        }
+    }
+
+    pub fn prepend(&mut self, mut other: List<T>) {
+        if let Some(node) = other.last_node_mut() {
+            node.next = self.head.take();
+            self.head = other.head.take();
+        }
     }
 
     pub fn len(&self) -> usize {
@@ -169,6 +182,20 @@ impl<T> List<T> {
             self.head = node.next.take();
             node
         })
+    }
+
+    fn last_node_mut(&mut self) -> Option<&mut Node<T>> {
+        let mut cur = self.head.as_deref_mut();
+
+        while let Some(node) = cur.take() {
+            if node.next.is_none() {
+                return Some(node);
+            }
+
+            cur = node.next.as_deref_mut();
+        }
+
+        None
     }
 }
 

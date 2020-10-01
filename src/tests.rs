@@ -217,3 +217,25 @@ fn reverse_works_on_empty_lists() {
 
     assert!(l.is_empty());
 }
+
+#[test]
+fn list_can_be_appended_to_another() {
+    let mut first = linked_list![1, 2, 3, 4];
+    let second = linked_list![5, 6, 7, 8, 9, 10];
+
+    first.append(second);
+
+    let expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].iter();
+    assert!(first.iter().eq(expected));
+}
+
+#[test]
+fn list_can_be_prepended_to_another() {
+    let mut first = linked_list![1, 2, 3, 4, 5];
+    let second = linked_list![7, 8, 9];
+
+    first.prepend(second);
+
+    let expected = [7, 8, 9, 1, 2, 3, 4, 5].iter();
+    assert!(first.iter().eq(expected));
+}
