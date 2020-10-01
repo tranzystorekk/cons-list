@@ -14,7 +14,7 @@ macro_rules! linked_list {
             let size = $n;
             let mut result = $crate::List::new();
             for _ in 0..size {
-                result.push(e.clone());
+                result.push_front(e.clone());
             }
 
             result
@@ -25,7 +25,7 @@ macro_rules! linked_list {
             let mut result = $crate::List::new();
             let order = [$($x),+].iter().cloned().rev();
             for el in order {
-                result.push(el);
+                result.push_front(el);
             }
 
             result
@@ -76,7 +76,7 @@ impl<T> List<T> {
         matches!(self.head, None)
     }
 
-    pub fn push(&mut self, elem: T) {
+    pub fn push_front(&mut self, elem: T) {
         let new_node = Node {
             value: elem,
             next: self.head.take(),
@@ -109,7 +109,7 @@ impl<T> List<T> {
         self.iter_mut().last()
     }
 
-    pub fn append(&mut self, elem: T) {
+    pub fn push_back(&mut self, elem: T) {
         let new_node = Node {
             value: elem,
             next: None,

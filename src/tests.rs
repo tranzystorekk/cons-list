@@ -42,10 +42,10 @@ fn list_last_can_be_mutably_peeked() {
 }
 
 #[test]
-fn list_can_be_appended_to() {
+fn list_can_be_pushed_back_to() {
     let mut l = linked_list!(1, 2, 3);
 
-    l.append(4);
+    l.push_back(4);
 
     assert_eq!(l.pop(), Some(1));
     assert_eq!(l.pop(), Some(2));
