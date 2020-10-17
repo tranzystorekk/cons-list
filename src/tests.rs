@@ -239,3 +239,26 @@ fn list_can_be_prepended_to_another() {
     let expected = [7, 8, 9, 1, 2, 3, 4, 5].iter();
     assert!(first.iter().eq(expected));
 }
+
+#[test]
+fn drain_filter_works() {
+    let mut l = linked_list![1, 2, 3, 4, 5, 6];
+
+    let drain_odd = l.drain_filter(|n| n % 2 != 0);
+    let expected_drained = [1, 3, 5].iter().copied();
+    assert!(drain_odd.eq(expected_drained));
+
+    let expected_remaining = [2, 4, 6].iter();
+    assert!(l.iter().eq(expected_remaining));
+}
+
+#[test]
+fn drain_filter_works_when_empty() {
+    let mut l = linked_list![1, 2, 3, 4, 5, 6];
+
+    let mut drain_greater_than_ten = l.drain_filter(|&n| n > 10);
+    assert!(drain_greater_than_ten.next().is_none());
+
+    let expected = [1, 2, 3, 4, 5, 6].iter();
+    assert!(l.iter().eq(expected));
+}

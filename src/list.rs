@@ -56,6 +56,11 @@ pub struct IntoIter<T> {
     list: List<T>,
 }
 
+pub struct DrainFilter<'a, T, F> {
+    owner: &'a mut Link<T>,
+    pred: F,
+}
+
 impl<T> List<T> {
     pub fn new() -> Self {
         List { head: None }
@@ -164,6 +169,10 @@ impl<T> List<T> {
         IterMut::from(self)
     }
 
+    pub fn drain_filter<F: FnMut(&T) -> bool>(&mut self, pred: F) -> DrainFilter<'_, T, F> {
+        DrainFilter::from(self, pred)
+    }
+
     pub fn reverse(&mut self) {
         let head_node = self.head.as_deref();
         if matches!(head_node, Some(&Node { next: None, .. }) | None) {
@@ -260,6 +269,15 @@ impl<'a, T> IterMut<'a, T> {
     }
 }
 
+impl<'a, T, F> DrainFilter<'a, T, F> {
+    pub fn from(list: &'a mut List<T>, pred: F) -> Self {
+        Self {
+            owner: &mut list.head,
+            pred,
+        }
+    }
+}
+
 impl<'a, T> Iterator for Iter<'a, T> {
     type Item = &'a T;
 
@@ -292,6 +310,28 @@ impl<T> Iterator for IntoIter<T> {
     }
 }
 
+impl<'a, T, F: FnMut(&T) -> bool> Iterator for DrainFilter<'a, T, F> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while let Some(node) =
+            unsafe { std::mem::transmute::<_, Option<&mut Node<T>>>(self.owner.as_deref_mut()) }
+        {
+            if (self.pred)(&node.value) {
+                break;
+            }
+
+            self.owner = &mut node.next;
+        }
+
+        self.owner.take().map(|mut node| {
+            *self.owner = node.next.take();
+            node.value
+        })
+    }
+}
+
 impl<T> FusedIterator for Iter<'_, T> {}
 impl<T> FusedIterator for IterMut<'_, T> {}
 impl<T> FusedIterator for IntoIter<T> {}
+impl<T, F: FnMut(&T) -> bool> FusedIterator for DrainFilter<'_, T, F> {}
