@@ -195,8 +195,8 @@ fn reverse_works_on_regular_lists() {
 
     l.reverse();
 
-    let expected = [5, 4, 3, 2, 1].iter();
-    assert!(l.iter().eq(expected));
+    let expected = [5, 4, 3, 2, 1];
+    assert!(l.iter().eq(&expected));
 }
 
 #[test]
@@ -205,8 +205,8 @@ fn reverse_works_on_one_element_lists() {
 
     l.reverse();
 
-    let expected = [1].iter();
-    assert!(l.iter().eq(expected));
+    let expected = [1];
+    assert!(l.iter().eq(&expected));
 }
 
 #[test]
@@ -225,8 +225,8 @@ fn list_can_be_appended_to_another() {
 
     first.append(second);
 
-    let expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].iter();
-    assert!(first.iter().eq(expected));
+    let expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    assert!(first.iter().eq(&expected));
 }
 
 #[test]
@@ -236,8 +236,8 @@ fn list_can_be_prepended_to_another() {
 
     first.prepend(second);
 
-    let expected = [7, 8, 9, 1, 2, 3, 4, 5].iter();
-    assert!(first.iter().eq(expected));
+    let expected = [7, 8, 9, 1, 2, 3, 4, 5];
+    assert!(first.iter().eq(&expected));
 }
 
 #[test]
@@ -248,17 +248,29 @@ fn drain_filter_works() {
     let expected_drained = [1, 3, 5].iter().copied();
     assert!(drain_odd.eq(expected_drained));
 
-    let expected_remaining = [2, 4, 6].iter();
-    assert!(l.iter().eq(expected_remaining));
+    let expected_remaining = [2, 4, 6];
+    assert!(l.iter().eq(&expected_remaining));
 }
 
 #[test]
 fn drain_filter_works_when_empty() {
     let mut l = linked_list![1, 2, 3, 4, 5, 6];
 
-    let mut drain_greater_than_ten = l.drain_filter(|&n| n > 10);
-    assert!(drain_greater_than_ten.next().is_none());
+    {
+        let mut drain_greater_than_ten = l.drain_filter(|&n| n > 10);
+        assert!(drain_greater_than_ten.next().is_none());
+    }
 
-    let expected = [1, 2, 3, 4, 5, 6].iter();
+    let expected = [1, 2, 3, 4, 5, 6];
+    assert!(l.iter().eq(&expected));
+}
+
+#[test]
+fn drain_filter_drains_even_if_not_consumed() {
+    let mut l: List<String> = linked_list!["aaa".into(), "dEf".into(), "ghi".into(), "XYZ".into()];
+
+    let _ = l.drain_filter(|s| s.chars().all(char::is_lowercase));
+
+    let expected: &[String] = &["dEf".into(), "XYZ".into()];
     assert!(l.iter().eq(expected));
 }
