@@ -244,7 +244,7 @@ fn list_can_be_prepended_to_another() {
 fn drain_filter_works() {
     let mut l = linked_list![1, 2, 3, 4, 5, 6];
 
-    let drain_odd = l.drain_filter(|n| n % 2 != 0);
+    let drain_odd = l.drain_filter(|&mut n| n % 2 != 0);
     let expected_drained = [1, 3, 5].iter().copied();
     assert!(drain_odd.eq(expected_drained));
 
@@ -257,7 +257,7 @@ fn drain_filter_works_when_empty() {
     let mut l = linked_list![1, 2, 3, 4, 5, 6];
 
     {
-        let mut drain_greater_than_ten = l.drain_filter(|&n| n > 10);
+        let mut drain_greater_than_ten = l.drain_filter(|&mut n| n > 10);
         assert!(drain_greater_than_ten.next().is_none());
     }
 

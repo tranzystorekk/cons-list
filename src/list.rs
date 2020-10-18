@@ -56,7 +56,7 @@ pub struct IntoIter<T> {
     list: List<T>,
 }
 
-pub struct DrainFilter<'a, T, F: FnMut(&T) -> bool> {
+pub struct DrainFilter<'a, T, F: FnMut(&mut T) -> bool> {
     owner: &'a mut Link<T>,
     pred: F,
 }
@@ -169,7 +169,7 @@ impl<T> List<T> {
         IterMut::from(self)
     }
 
-    pub fn drain_filter<F: FnMut(&T) -> bool>(&mut self, pred: F) -> DrainFilter<'_, T, F> {
+    pub fn drain_filter<F: FnMut(&mut T) -> bool>(&mut self, pred: F) -> DrainFilter<'_, T, F> {
         DrainFilter::from(self, pred)
     }
 
@@ -269,7 +269,7 @@ impl<'a, T> IterMut<'a, T> {
     }
 }
 
-impl<'a, T, F: FnMut(&T) -> bool> DrainFilter<'a, T, F> {
+impl<'a, T, F: FnMut(&mut T) -> bool> DrainFilter<'a, T, F> {
     pub fn from(list: &'a mut List<T>, pred: F) -> Self {
         Self {
             owner: &mut list.head,
@@ -279,7 +279,7 @@ impl<'a, T, F: FnMut(&T) -> bool> DrainFilter<'a, T, F> {
 
     fn next_node(&mut self) -> Link<T> {
         while let Some(node) = unsafe { self.deref_trans() } {
-            if (self.pred)(&node.value) {
+            if (self.pred)(&mut node.value) {
                 break;
             }
 
@@ -297,7 +297,7 @@ impl<'a, T, F: FnMut(&T) -> bool> DrainFilter<'a, T, F> {
     }
 }
 
-impl<T, F: FnMut(&T) -> bool> Drop for DrainFilter<'_, T, F> {
+impl<T, F: FnMut(&mut T) -> bool> Drop for DrainFilter<'_, T, F> {
     fn drop(&mut self) {
         while let Some(_) = self.next_node() {}
     }
@@ -335,7 +335,7 @@ impl<T> Iterator for IntoIter<T> {
     }
 }
 
-impl<'a, T, F: FnMut(&T) -> bool> Iterator for DrainFilter<'a, T, F> {
+impl<T, F: FnMut(&mut T) -> bool> Iterator for DrainFilter<'_, T, F> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -346,4 +346,4 @@ impl<'a, T, F: FnMut(&T) -> bool> Iterator for DrainFilter<'a, T, F> {
 impl<T> FusedIterator for Iter<'_, T> {}
 impl<T> FusedIterator for IterMut<'_, T> {}
 impl<T> FusedIterator for IntoIter<T> {}
-impl<T, F: FnMut(&T) -> bool> FusedIterator for DrainFilter<'_, T, F> {}
+impl<T, F: FnMut(&mut T) -> bool> FusedIterator for DrainFilter<'_, T, F> {}
