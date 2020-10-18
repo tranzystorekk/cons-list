@@ -278,9 +278,7 @@ impl<'a, T, F: FnMut(&T) -> bool> DrainFilter<'a, T, F> {
     }
 
     fn next_node(&mut self) -> Link<T> {
-        while let Some(node) =
-            unsafe { std::mem::transmute::<_, Option<&mut Node<T>>>(self.owner.as_deref_mut()) }
-        {
+        while let Some(node) = unsafe { self.deref_trans() } {
             if (self.pred)(&node.value) {
                 break;
             }
@@ -292,6 +290,10 @@ impl<'a, T, F: FnMut(&T) -> bool> DrainFilter<'a, T, F> {
             *self.owner = node.next.take();
             node
         })
+    }
+
+    unsafe fn deref_trans<'b>(&mut self) -> Option<&'b mut Node<T>> {
+        std::mem::transmute(self.owner.as_deref_mut())
     }
 }
 
