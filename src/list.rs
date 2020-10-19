@@ -40,6 +40,7 @@ struct Node<T> {
 
 type Link<T> = Option<Box<Node<T>>>;
 
+#[derive(Default)]
 pub struct List<T> {
     head: Link<T>,
 }
@@ -95,7 +96,7 @@ impl<T> List<T> {
     }
 
     pub fn clear(&mut self) {
-        while let Some(_) = self.pop_node() {}
+        while self.pop_node().is_some() {}
     }
 
     pub fn head(&self) -> Option<&T> {
@@ -222,7 +223,7 @@ impl<T: fmt::Debug> fmt::Debug for List<T> {
 
 impl<T> Drop for List<T> {
     fn drop(&mut self) {
-        while let Some(_) = self.pop_node() {}
+        while self.pop_node().is_some() {}
     }
 }
 
@@ -299,7 +300,7 @@ impl<'a, T, F: FnMut(&mut T) -> bool> DrainFilter<'a, T, F> {
 
 impl<T, F: FnMut(&mut T) -> bool> Drop for DrainFilter<'_, T, F> {
     fn drop(&mut self) {
-        while let Some(_) = self.next_node() {}
+        while self.next_node().is_some() {}
     }
 }
 
