@@ -267,10 +267,10 @@ fn drain_filter_works_when_empty() {
 
 #[test]
 fn drain_filter_drains_even_if_not_consumed() {
-    let mut l: List<String> = linked_list!["aaa".into(), "dEf".into(), "ghi".into(), "XYZ".into()];
+    let mut l = linked_list!["aaa", "dEf", "ghi", "XYZ"];
 
     let _ = l.drain_filter(|s| s.chars().all(char::is_lowercase));
 
-    let expected: &[String] = &["dEf".into(), "XYZ".into()];
+    let expected = &["dEf", "XYZ"];
     assert!(l.iter().eq(expected));
 }
