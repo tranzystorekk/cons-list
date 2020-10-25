@@ -47,11 +47,8 @@ fn list_can_be_pushed_back_to() {
 
     l.push_back(4);
 
-    assert_eq!(l.pop(), Some(1));
-    assert_eq!(l.pop(), Some(2));
-    assert_eq!(l.pop(), Some(3));
-    assert_eq!(l.pop(), Some(4));
-    assert_eq!(l.pop(), None);
+    let expected = [1, 2, 3, 4];
+    itertools::assert_equal(&expected, &l);
 }
 
 #[test]
@@ -60,9 +57,8 @@ fn head_and_tail_can_be_consed_together() {
 
     let consed = List::from_cons(4, l);
 
-    let collected: Vec<i32> = consed.into_iter().collect();
-
-    assert_eq!(collected, vec![4, 3, 2, 1]);
+    let expected = [4, 3, 2, 1];
+    itertools::assert_equal(&expected, &consed);
 }
 
 #[test]
@@ -119,9 +115,8 @@ fn no_tail_when_consing_one_element_list() {
 fn list_can_be_iterated() {
     let l = linked_list![1, 2, 3];
 
-    let collected: Vec<i32> = l.iter().copied().collect();
-
-    assert_eq!(collected, vec![1, 2, 3]);
+    let expected = [1, 2, 3];
+    itertools::assert_equal(&expected, &l);
 }
 
 #[test]
@@ -130,9 +125,8 @@ fn list_can_be_mutably_iterated() {
 
     l.iter_mut().for_each(|el| *el *= 2);
 
-    let collected: Vec<i32> = l.iter().copied().collect();
-
-    assert_eq!(collected, vec![2, 4, 6]);
+    let expected = [2, 4, 6];
+    itertools::assert_equal(&expected, &l);
 }
 
 #[test]
@@ -154,18 +148,16 @@ fn list_can_be_mutably_looped_over() {
         *el *= 2;
     }
 
-    let collected: Vec<i32> = l.iter().copied().collect();
-
-    assert_eq!(collected, vec![2, 4, 6]);
+    let expected = [2, 4, 6];
+    itertools::assert_equal(&expected, &l);
 }
 
 #[test]
 fn list_can_be_transformed_into_iterator() {
     let l = linked_list![1, 2, 3];
 
-    let collected: Vec<i32> = l.into_iter().collect();
-
-    assert_eq!(collected, vec![1, 2, 3]);
+    let expected = [1, 2, 3].iter().copied();
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
@@ -196,7 +188,7 @@ fn reverse_works_on_regular_lists() {
     l.reverse();
 
     let expected = [5, 4, 3, 2, 1];
-    assert!(l.iter().eq(&expected));
+    itertools::assert_equal(&expected, &l);
 }
 
 #[test]
@@ -206,7 +198,7 @@ fn reverse_works_on_one_element_lists() {
     l.reverse();
 
     let expected = [1];
-    assert!(l.iter().eq(&expected));
+    itertools::assert_equal(&expected, &l);
 }
 
 #[test]
@@ -226,7 +218,7 @@ fn list_can_be_appended_to_another() {
     first.append(second);
 
     let expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    assert!(first.iter().eq(&expected));
+    itertools::assert_equal(&expected, &first);
 }
 
 #[test]
@@ -237,7 +229,7 @@ fn list_can_be_prepended_to_another() {
     first.prepend(second);
 
     let expected = [7, 8, 9, 1, 2, 3, 4, 5];
-    assert!(first.iter().eq(&expected));
+    itertools::assert_equal(&expected, &first);
 }
 
 #[test]
@@ -246,10 +238,10 @@ fn drain_filter_works() {
 
     let drain_odd = l.drain_filter(|&mut n| n % 2 != 0);
     let expected_drained = [1, 3, 5].iter().copied();
-    assert!(drain_odd.eq(expected_drained));
+    itertools::assert_equal(expected_drained, drain_odd);
 
     let expected_remaining = [2, 4, 6];
-    assert!(l.iter().eq(&expected_remaining));
+    itertools::assert_equal(&expected_remaining, &l);
 }
 
 #[test]
@@ -262,7 +254,7 @@ fn drain_filter_works_when_empty() {
     }
 
     let expected = [1, 2, 3, 4, 5, 6];
-    assert!(l.iter().eq(&expected));
+    itertools::assert_equal(&expected, &l);
 }
 
 #[test]
@@ -271,6 +263,6 @@ fn drain_filter_drains_even_if_not_consumed() {
 
     let _ = l.drain_filter(|s| s.chars().all(char::is_lowercase));
 
-    let expected = &["dEf", "XYZ"];
-    assert!(l.iter().eq(expected));
+    let expected = ["dEf", "XYZ"];
+    itertools::assert_equal(&expected, &l);
 }
