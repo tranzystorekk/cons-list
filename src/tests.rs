@@ -250,7 +250,12 @@ fn drain_filter_works_when_empty() {
 
     {
         let mut drain_greater_than_ten = l.drain_filter(|&mut n| n > 10);
-        assert!(drain_greater_than_ten.next().is_none());
+        let next_elem = drain_greater_than_ten.next();
+        assert!(
+            next_elem.is_none(),
+            "DrainFilter(x > 10) is not an empty iterator: next() returned {:?}",
+            next_elem
+        );
     }
 
     let expected = [1, 2, 3, 4, 5, 6];
