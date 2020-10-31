@@ -271,3 +271,21 @@ fn drain_filter_drains_even_if_not_consumed() {
     let expected = ["dEf", "XYZ"];
     itertools::assert_equal(&expected, &l);
 }
+
+#[test]
+fn remove_works() {
+    let mut l = linked_list![1, 2, 3, 4, 5, 6];
+
+    assert_eq!(4, l.remove(3));
+
+    let expected = [1, 2, 3, 5, 6];
+    itertools::assert_equal(&expected, &l);
+}
+
+#[test]
+#[should_panic]
+fn remove_panics_when_out_of_bounds() {
+    let mut l = linked_list![1, 2, 3];
+
+    l.remove(3);
+}
