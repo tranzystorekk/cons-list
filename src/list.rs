@@ -187,6 +187,28 @@ impl<T> List<T> {
         }
     }
 
+    pub fn remove(&mut self, at: usize) -> T {
+        unsafe { self.remove_impl(at) }
+    }
+
+    unsafe fn remove_impl(&mut self, mut at: usize) -> T {
+        let mut cur: *mut _ = &mut self.head;
+
+        while let Some(node) = (*cur).as_deref_mut() {
+            if at == 0 {
+                break;
+            }
+
+            cur = &mut node.next;
+            at -= 1;
+        }
+
+        let mut node = (*cur).take().expect("remove called past list bounds");
+        *cur = node.next.take();
+
+        node.value
+    }
+
     fn pop_node(&mut self) -> Link<T> {
         self.head.take().map(|mut node| {
             self.head = node.next.take();
