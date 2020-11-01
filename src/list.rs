@@ -209,6 +209,25 @@ impl<T> List<T> {
         node.value
     }
 
+    pub fn split_off(&mut self, at: usize) -> Self {
+        unsafe { self.split_off_impl(at) }
+    }
+
+    unsafe fn split_off_impl(&mut self, at: usize) -> Self {
+        let mut cur: *mut _ = &mut self.head;
+
+        for _ in 0..at {
+            let node = (*cur)
+                .as_deref_mut()
+                .expect("split_off called past list bounds");
+            cur = &mut node.next;
+        }
+
+        Self {
+            head: (*cur).take(),
+        }
+    }
+
     fn pop_node(&mut self) -> Link<T> {
         self.head.take().map(|mut node| {
             self.head = node.next.take();
