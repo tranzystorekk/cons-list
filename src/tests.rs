@@ -289,3 +289,24 @@ fn remove_panics_when_out_of_bounds() {
 
     l.remove(3);
 }
+
+#[test]
+fn split_off_works() {
+    let mut l = linked_list![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    let split = l.split_off(3);
+
+    let expected_original = [1, 2, 3];
+    itertools::assert_equal(&expected_original, &l);
+
+    let expected_split = [4, 5, 6, 7, 8, 9, 10];
+    itertools::assert_equal(&expected_split, &split);
+}
+
+#[test]
+#[should_panic]
+fn split_off_panics_when_out_of_bounds() {
+    let mut l = linked_list![1, 2, 3, 4];
+
+    l.split_off(5);
+}
