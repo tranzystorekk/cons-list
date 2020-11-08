@@ -191,20 +191,11 @@ impl<T> List<T> {
         unsafe { self.remove_impl(at) }
     }
 
-    unsafe fn remove_impl(&mut self, mut at: usize) -> T {
-        let mut cur: *mut _ = &mut self.head;
+    unsafe fn remove_impl(&mut self, at: usize) -> T {
+        let owner = self.get_nth_owner(at);
 
-        while let Some(node) = (*cur).as_deref_mut() {
-            if at == 0 {
-                break;
-            }
-
-            cur = &mut node.next;
-            at -= 1;
-        }
-
-        let mut node = (*cur).take().expect("remove called past list bounds");
-        *cur = node.next.take();
+        let mut node = (*owner).take().expect("illegal access past list bounds");
+        *owner = node.next.take();
 
         node.value
     }
@@ -214,18 +205,24 @@ impl<T> List<T> {
     }
 
     unsafe fn split_off_impl(&mut self, at: usize) -> Self {
+        let owner = self.get_nth_owner(at);
+
+        Self {
+            head: (*owner).take(),
+        }
+    }
+
+    unsafe fn get_nth_owner(&mut self, n: usize) -> *mut Link<T> {
         let mut cur: *mut _ = &mut self.head;
 
-        for _ in 0..at {
+        for _ in 0..n {
             let node = (*cur)
                 .as_deref_mut()
-                .expect("split_off called past list bounds");
+                .expect("illegal access past list bounds");
             cur = &mut node.next;
         }
 
-        Self {
-            head: (*cur).take(),
-        }
+        cur
     }
 
     fn pop_node(&mut self) -> Link<T> {
