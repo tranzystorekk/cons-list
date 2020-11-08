@@ -65,7 +65,7 @@ pub struct DrainFilter<'a, T, F: FnMut(&mut T) -> bool> {
 }
 
 impl<T> List<T> {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         List { head: None }
     }
 
