@@ -1,5 +1,6 @@
 use crate::cons::{Cons, LCons};
 
+use std::cmp::Ordering;
 use std::fmt;
 use std::iter::FusedIterator;
 
@@ -263,6 +264,31 @@ impl<T: Clone> Clone for List<T> {
         }
 
         result
+    }
+}
+
+impl<T: PartialEq> PartialEq for List<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.iter().eq(other)
+    }
+
+    #[allow(clippy::partialeq_ne_impl)]
+    fn ne(&self, other: &Self) -> bool {
+        self.iter().ne(other)
+    }
+}
+
+impl<T: Eq> Eq for List<T> {}
+
+impl<T: PartialOrd> PartialOrd for List<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.iter().partial_cmp(other)
+    }
+}
+
+impl<T: Ord> Ord for List<T> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.iter().cmp(other)
     }
 }
 

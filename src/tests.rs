@@ -243,6 +243,28 @@ fn list_can_be_cloned() {
 }
 
 #[test]
+fn list_can_be_compared_eq() {
+    let l = linked_list![1, 2, 3, 4, 5];
+    let m = linked_list![1, 2, 3, 4, 5];
+    let n = linked_list![10, 20, 30, 40, 50];
+
+    assert_eq!(l, m);
+    assert_ne!(l, n);
+}
+
+#[test]
+fn list_can_be_compared_ord() {
+    let l = linked_list![1, 2, 3, 4, 5];
+    let m = linked_list![1, 2, 3, 6, 4];
+    let n = linked_list![1, 2, 3, 4, 5];
+
+    assert!(l < m);
+    assert!(m > l);
+    assert!(l <= n);
+    assert!(n >= l);
+}
+
+#[test]
 fn drain_filter_works() {
     let mut l = linked_list![1, 2, 3, 4, 5, 6];
 
