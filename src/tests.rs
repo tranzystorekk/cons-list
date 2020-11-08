@@ -265,6 +265,26 @@ fn list_can_be_compared_ord() {
 }
 
 #[test]
+fn list_can_be_hashed() {
+    use std::collections::HashMap;
+    let mut map = HashMap::new();
+
+    let key_a = linked_list![];
+    let key_b = linked_list![1, 2, 3];
+
+    map.insert(key_a.clone(), 1);
+    map.insert(key_b.clone(), 2);
+
+    assert_eq!(1, map[&key_a]);
+    assert_eq!(2, map[&key_b]);
+
+    map.insert(key_b.clone(), 10);
+
+    assert_eq!(1, map[&key_a]);
+    assert_eq!(10, map[&key_b]);
+}
+
+#[test]
 fn drain_filter_works() {
     let mut l = linked_list![1, 2, 3, 4, 5, 6];
 

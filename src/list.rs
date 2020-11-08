@@ -2,6 +2,7 @@ use crate::cons::{Cons, LCons};
 
 use std::cmp::Ordering;
 use std::fmt;
+use std::hash::{Hash, Hasher};
 use std::iter::FusedIterator;
 
 #[macro_export]
@@ -292,6 +293,14 @@ impl<T: Ord> Ord for List<T> {
 impl<T: PartialEq> List<T> {
     pub fn contains(&self, x: &T) -> bool {
         self.iter().any(|el| el == x)
+    }
+}
+
+impl<T: Hash> Hash for List<T> {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        for el in self {
+            el.hash(state);
+        }
     }
 }
 
