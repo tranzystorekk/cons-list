@@ -254,10 +254,7 @@ impl<T: Clone> Clone for List<T> {
         let mut owner = &mut result.head;
 
         for value in self.iter().cloned() {
-            let new_node = Node {
-                value,
-                next: None,
-            };
+            let new_node = Node { value, next: None };
 
             *owner = Some(Box::new(new_node));
             owner = &mut owner.as_deref_mut().unwrap().next;
