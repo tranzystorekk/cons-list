@@ -233,6 +233,16 @@ fn list_can_be_prepended_to_another() {
 }
 
 #[test]
+fn list_can_be_cloned() {
+    let l: List<String> = linked_list!["abc".into(), "deadbeef".into(), "Some other string".into()];
+    let clone = l.clone();
+
+    let expected = ["abc", "deadbeef", "Some other string"];
+    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(&expected, &clone);
+}
+
+#[test]
 fn drain_filter_works() {
     let mut l = linked_list![1, 2, 3, 4, 5, 6];
 

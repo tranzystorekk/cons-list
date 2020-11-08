@@ -247,6 +247,25 @@ impl<T> List<T> {
     }
 }
 
+impl<T: Clone> Clone for List<T> {
+    fn clone(&self) -> Self {
+        let mut result = List::new();
+        let mut owner = &mut result.head;
+
+        for value in self.iter().cloned() {
+            let new_node = Node {
+                value,
+                next: None,
+            };
+
+            *owner = Some(Box::new(new_node));
+            owner = &mut owner.as_deref_mut().unwrap().next;
+        }
+
+        result
+    }
+}
+
 impl<T: PartialEq> List<T> {
     pub fn contains(&self, x: &T) -> bool {
         self.iter().any(|el| el == x)
