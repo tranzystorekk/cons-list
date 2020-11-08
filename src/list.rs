@@ -176,6 +176,10 @@ impl<T> List<T> {
         DrainFilter::from(self, pred)
     }
 
+    pub fn remove_if<F: FnMut(&mut T) -> bool>(&mut self, pred: F) {
+        let _ = self.drain_filter(pred);
+    }
+
     pub fn reverse(&mut self) {
         let head_node = self.head.as_deref();
         if matches!(head_node, Some(&Node { next: None, .. }) | None) {

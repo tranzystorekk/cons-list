@@ -362,3 +362,13 @@ fn split_off_panics_when_out_of_bounds() {
 
     l.split_off(5);
 }
+
+#[test]
+fn remove_if_works() {
+    let mut l = linked_list![1, 2, 3, 4, 5, 6];
+
+    l.remove_if(|&mut n| n % 2 == 0);
+
+    let expected = [1, 3, 5];
+    itertools::assert_equal(&expected, &l);
+}
