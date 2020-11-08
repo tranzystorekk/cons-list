@@ -213,23 +213,25 @@ fn reverse_works_on_empty_lists() {
 #[test]
 fn list_can_be_appended_to_another() {
     let mut first = linked_list![1, 2, 3, 4];
-    let second = linked_list![5, 6, 7, 8, 9, 10];
+    let mut second = linked_list![5, 6, 7, 8, 9, 10];
 
-    first.append(second);
+    first.append(&mut second);
 
     let expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     itertools::assert_equal(&expected, &first);
+    assert!(second.is_empty());
 }
 
 #[test]
 fn list_can_be_prepended_to_another() {
     let mut first = linked_list![1, 2, 3, 4, 5];
-    let second = linked_list![7, 8, 9];
+    let mut second = linked_list![7, 8, 9];
 
-    first.prepend(second);
+    first.prepend(&mut second);
 
     let expected = [7, 8, 9, 1, 2, 3, 4, 5];
     itertools::assert_equal(&expected, &first);
+    assert!(second.is_empty());
 }
 
 #[test]

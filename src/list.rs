@@ -130,7 +130,7 @@ impl<T> List<T> {
         }
     }
 
-    pub fn append(&mut self, mut other: List<T>) {
+    pub fn append(&mut self, other: &mut List<T>) {
         if other.is_empty() {
             return;
         }
@@ -143,7 +143,7 @@ impl<T> List<T> {
         }
     }
 
-    pub fn prepend(&mut self, mut other: List<T>) {
+    pub fn prepend(&mut self, other: &mut List<T>) {
         if let Some(node) = other.last_node_mut() {
             node.next = self.head.take();
             self.head = other.head.take();
