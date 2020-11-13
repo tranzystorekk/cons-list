@@ -269,6 +269,15 @@ impl<T: Clone> Clone for List<T> {
     }
 }
 
+impl<T> From<Cons<T, List<T>>> for List<T> {
+    fn from(cons: Cons<T, List<T>>) -> Self {
+        match cons {
+            Cons::Cons(head, tail) => List::from_cons(head, tail),
+            Cons::Nil => List::new(),
+        }
+    }
+}
+
 impl<T: PartialEq> PartialEq for List<T> {
     fn eq(&self, other: &Self) -> bool {
         self.iter().eq(other)
