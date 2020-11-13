@@ -81,7 +81,7 @@ impl<T> List<T> {
     }
 
     pub fn is_empty(&self) -> bool {
-        matches!(self.head, None)
+        self.head.is_none()
     }
 
     pub fn push_front(&mut self, elem: T) {
