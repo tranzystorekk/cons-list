@@ -51,6 +51,28 @@ impl<T> Cons<T, List<T>> {
         head_method_body!(self)
     }
 
+    /// Converts `&Cons<T, List<T>>` to `Option<&T::Target>`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let list = linked_list![Box::new(1), Box::new(2)];
+    /// let cons = list.cons();
+    ///
+    /// assert!(matches!(cons.as_deref_head(), Some(&1)));
+    /// ```
+    pub fn as_deref_head(&self) -> Option<&T::Target>
+    where
+        T: Deref,
+    {
+        match self {
+            Cons::Cons(ref head, _) => Some(head.deref()),
+            _ => None,
+        }
+    }
+
     pub fn tail(self) -> Option<List<T>> {
         tail_method_body!(self)
     }
