@@ -86,7 +86,7 @@ impl<T> Cons<T, List<T>> {
     }
 
     pub fn as_ref(&self) -> Cons<&T, &List<T>> {
-        match *self {
+        match self {
             Cons::Cons(ref head, ref tail) => Cons::Cons(head, tail),
             _ => Cons::Nil,
         }
