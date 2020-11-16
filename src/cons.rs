@@ -1,5 +1,7 @@
 use crate::list::List;
 
+use std::ops::Deref;
+
 macro_rules! head_method_body {
     ($myself:ident) => {
         match $myself {
@@ -64,6 +66,28 @@ impl<T> Cons<T, List<T>> {
     pub fn as_ref(&self) -> Cons<&T, &List<T>> {
         match *self {
             Cons::Cons(ref head, ref tail) => Cons::Cons(head, tail),
+            _ => Cons::Nil,
+        }
+    }
+
+    /// Converts from `&Cons<T, List<T>>` to `Cons<&T::Target, &List<T>>`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::{head_matches, linked_list};
+    ///
+    /// let list = linked_list![Box::new(1), Box::new(2)];
+    /// let cons = list.cons();
+    ///
+    /// assert!(head_matches!(cons.as_deref(), &1));
+    /// ```
+    pub fn as_deref(&self) -> Cons<&T::Target, &List<T>>
+    where
+        T: Deref,
+    {
+        match self {
+            Cons::Cons(ref head, ref tail) => Cons::Cons(head.deref(), tail),
             _ => Cons::Nil,
         }
     }
