@@ -540,6 +540,33 @@ impl<T> List<T> {
         }
     }
 
+    /// Removes the last element from the `List` and returns it,
+    /// or `None` if the `List` is empty.
+    ///
+    /// Complexity: *O*(n)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3];
+    ///
+    /// assert_eq!(list.pop_back(), Some(3));
+    /// assert_eq!(list.pop_back(), Some(2));
+    /// assert_eq!(list.pop_back(), Some(1));
+    /// assert_eq!(list.pop_back(), None);
+    /// ```
+    pub fn pop_back(&mut self) -> Option<T> {
+        unsafe { self.pop_back_impl() }
+    }
+
+    unsafe fn pop_back_impl(&mut self) -> Option<T> {
+        let owner = self.get_last_owner();
+
+        (*owner).take().map(|node| node.value)
+    }
+
     /// Removes and returns the element at the given index.
     ///
     /// # Panics
@@ -606,6 +633,20 @@ impl<T> List<T> {
             let node = (*cur)
                 .as_deref_mut()
                 .expect("illegal access past list bounds");
+            cur = &mut node.next;
+        }
+
+        cur
+    }
+
+    unsafe fn get_last_owner(&mut self) -> *mut Link<T> {
+        let mut cur: *mut _ = &mut self.head;
+
+        while let Some(node) = (*cur).as_deref_mut() {
+            if node.next.is_none() {
+                break;
+            }
+
             cur = &mut node.next;
         }
 

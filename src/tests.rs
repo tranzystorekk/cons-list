@@ -76,13 +76,23 @@ fn list_len_works_correctly() {
 }
 
 #[test]
-fn items_are_popped_in_lifo_order() {
+fn list_items_can_be_popped_front() {
     let mut l = linked_list![1, 2, 3];
 
     assert_eq!(l.pop_front(), Some(1));
     assert_eq!(l.pop_front(), Some(2));
     assert_eq!(l.pop_front(), Some(3));
     assert_eq!(l.pop_front(), None);
+}
+
+#[test]
+fn list_items_can_be_popped_back() {
+    let mut l = linked_list![1, 2, 3];
+
+    assert_eq!(l.pop_back(), Some(3));
+    assert_eq!(l.pop_back(), Some(2));
+    assert_eq!(l.pop_back(), Some(1));
+    assert_eq!(l.pop_back(), None);
 }
 
 #[test]
