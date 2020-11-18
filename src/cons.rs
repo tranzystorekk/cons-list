@@ -31,7 +31,7 @@ macro_rules! head_matches {
     };
 }
 
-pub type LCons<T> = Cons<T, List<T>>;
+pub(crate) type LCons<T> = Cons<T, List<T>>;
 
 pub enum Cons<T, L> {
     Cons(T, L),

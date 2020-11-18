@@ -1,5 +1,5 @@
-mod cons;
-mod list;
+pub mod cons;
+pub mod list;
 
 pub use cons::Cons;
 pub use list::List;
