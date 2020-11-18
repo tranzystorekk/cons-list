@@ -1,3 +1,5 @@
+//! A single-linked list.
+
 use crate::cons::{Cons, LCons};
 
 use std::cmp::Ordering;
@@ -5,6 +7,19 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 use std::iter::FusedIterator;
 
+/// Creates a `List` containing the arguments.
+///
+/// All elements are cloned and pushed into the list.
+///
+/// # Examples
+///
+/// This macro is similar in syntax to the `vec!` macro:
+/// ```
+/// use cons_list::linked_list;
+///
+/// let list_one = linked_list![1, 2, 3, 4, 5];
+/// let list_two = linked_list!["foo"; 10];
+/// ```
 #[macro_export]
 macro_rules! linked_list {
     () => {
@@ -42,33 +57,66 @@ struct Node<T> {
 
 type Link<T> = Option<Box<Node<T>>>;
 
+/// A single-linked list.
+///
+/// This list internally keeps only its head,
+/// so operations like `push_back`, `last` or `len` will execute in *O*(n).
 #[derive(Default)]
 pub struct List<T> {
     head: Link<T>,
 }
 
+/// A reference iterator over a `List`.
 pub struct Iter<'a, T> {
     current_node: Option<&'a Node<T>>,
 }
 
+/// A mutable reference iterator over a `List`.
 pub struct IterMut<'a, T> {
     current_node: Option<&'a mut Node<T>>,
 }
 
+/// An iterator that takes ownership of a `List`.
 pub struct IntoIter<T> {
     list: List<T>,
 }
 
+/// An iterator that removes from a `List` elements specified by a predicate.
 pub struct DrainFilter<'a, T, F: FnMut(&mut T) -> bool> {
     owner: &'a mut Link<T>,
     pred: F,
 }
 
 impl<T> List<T> {
+    /// Creates an empty `List`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::List;
+    ///
+    /// let list: List<u32> = List::new();
+    /// ```
     pub const fn new() -> Self {
         List { head: None }
     }
 
+    /// Creates a list from a cons pair `head, tail`.
+    ///
+    /// Allocates memory for the `head` element within the `tail` list.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::{linked_list, List};
+    ///
+    /// let head = 1;
+    /// let tail = linked_list![2, 3, 4, 5];
+    ///
+    /// let list = List::from_cons(head, tail);
+    ///
+    /// assert_eq!(&linked_list![1, 2, 3, 4, 5], &list);
+    /// ```
     pub fn from_cons(head: T, mut tail: List<T>) -> Self {
         let head = Node {
             value: head,
@@ -80,10 +128,41 @@ impl<T> List<T> {
         }
     }
 
+    /// Returns `true` if the `List` is empty.
+    ///
+    /// Complexity: *O*(1)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::List;
+    ///
+    /// let mut list = List::new();
+    /// assert!(list.is_empty());
+    ///
+    /// list.push_front("foo");
+    /// assert!(!list.is_empty());
+    /// ```
     pub fn is_empty(&self) -> bool {
         self.head.is_none()
     }
 
+    /// Adds an element to the front of the `List`.
+    ///
+    /// Complexity: *O*(1)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![];
+    ///
+    /// list.push_front(2);
+    /// list.push_front(1);
+    ///
+    /// assert_eq!(&linked_list![1, 2], &list);
+    /// ```
     pub fn push_front(&mut self, elem: T) {
         let new_node = Node {
             value: elem,
@@ -93,30 +172,143 @@ impl<T> List<T> {
         self.head = Some(Box::new(new_node));
     }
 
+    /// Removes the first element from the `List` and returns it,
+    /// or `None` if the `List` is empty.
+    ///
+    /// Complexity: *O*(1)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3];
+    ///
+    /// assert_eq!(list.pop(), Some(1));
+    /// assert_eq!(list.pop(), Some(2));
+    /// assert_eq!(list.pop(), Some(3));
+    /// assert_eq!(list.pop(), None);
+    /// ```
     pub fn pop(&mut self) -> Option<T> {
         self.pop_node().map(|node| node.value)
     }
 
+    /// Removes all elements from the `List`.
+    ///
+    /// Complexity: *O*(n)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![5, 6, 7, 8, 9, 10];
+    ///
+    /// assert!(!list.is_empty());
+    ///
+    /// list.clear();
+    /// assert!(list.is_empty());
+    /// ```
     pub fn clear(&mut self) {
         while self.pop_node().is_some() {}
     }
 
+    /// Provides a reference to the first element,
+    /// or `None` if the `List` is empty.
+    ///
+    /// Complexity: *O*(1)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let list = linked_list![1, 2, 3];
+    ///
+    /// assert_eq!(Some(&1), list.head());
+    /// ```
     pub fn head(&self) -> Option<&T> {
         self.head.as_ref().map(|node| &node.value)
     }
 
+    /// Provides a mutable reference to the first element,
+    /// or `None` if the `List` is empty.
+    ///
+    /// Complexity: *O*(1)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3];
+    ///
+    /// if let Some(head) = list.head_mut() {
+    ///     *head += 10;
+    /// }
+    ///
+    /// assert_eq!(&linked_list![11, 2, 3], &list);
+    /// ```
     pub fn head_mut(&mut self) -> Option<&mut T> {
         self.head.as_mut().map(|node| &mut node.value)
     }
 
+    /// Provides a reference to the last element,
+    /// or `None` if the `List` is empty.
+    ///
+    /// Complexity: *O*(n)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let list = linked_list![1, 2, 3];
+    ///
+    /// assert_eq!(Some(&3), list.last());
+    /// ```
     pub fn last(&self) -> Option<&T> {
         self.iter().last()
     }
 
+    /// Provides a mutable reference to the last element,
+    /// or `None` if the `List` is empty.
+    ///
+    /// Complexity: *O*(n)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3];
+    ///
+    /// if let Some(last) = list.last_mut() {
+    ///     *last += 10;
+    /// }
+    ///
+    /// assert_eq!(&linked_list![1, 2, 13], &list);
+    /// ```
     pub fn last_mut(&mut self) -> Option<&mut T> {
         self.iter_mut().last()
     }
 
+    /// Adds an element to the back of the `List`.
+    ///
+    /// Complexity: *O*(n)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![];
+    ///
+    /// list.push_back(1);
+    /// list.push_back(2);
+    ///
+    /// assert_eq!(&linked_list![1, 2], &list);
+    /// ```
     pub fn push_back(&mut self, elem: T) {
         let new_node = Node {
             value: elem,
@@ -130,6 +322,27 @@ impl<T> List<T> {
         }
     }
 
+    /// Moves all elements from `other` to the back of the `List`.
+    ///
+    /// After this operation, `other` becomes empty.
+    ///
+    /// Complexity: *O*(n)
+    ///
+    /// Memory complexity: *O*(1)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3];
+    /// let mut second = linked_list![4, 5, 6];
+    ///
+    /// list.append(&mut second);
+    ///
+    /// assert!(second.is_empty());
+    /// assert_eq!(&linked_list![1, 2, 3, 4, 5, 6], &list);
+    /// ```
     pub fn append(&mut self, other: &mut List<T>) {
         if other.is_empty() {
             return;
@@ -143,6 +356,27 @@ impl<T> List<T> {
         }
     }
 
+    /// Moves all elements from `other` to the front of the `List`.
+    ///
+    /// After this operation, `other` becomes empty.
+    ///
+    /// Complexity: *O*(k) where k is the size of `other`.
+    ///
+    /// Memory complexity: *O*(1)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![4, 5, 6];
+    /// let mut second = linked_list![1, 2, 3];
+    ///
+    /// list.prepend(&mut second);
+    ///
+    /// assert!(second.is_empty());
+    /// assert_eq!(&linked_list![1, 2, 3, 4, 5, 6], &list);
+    /// ```
     pub fn prepend(&mut self, other: &mut List<T>) {
         if let Some(node) = other.last_node_mut() {
             node.next = self.head.take();
@@ -150,10 +384,41 @@ impl<T> List<T> {
         }
     }
 
+    /// Returns the length of the `List`.
+    ///
+    /// Complexity: *O*(n)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3];
+    ///
+    /// assert_eq!(list.len(), 3);
+    ///
+    /// list.pop();
+    /// assert_eq!(list.len(), 2);
+    /// ```
     pub fn len(&self) -> usize {
         self.iter().count()
     }
 
+    /// Converts from `List<T>` to `Cons<T, List<T>>`.
+    ///
+    /// See `Cons` for more information.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::{linked_list, Cons};
+    ///
+    /// let list = linked_list![1, 2, 3, 4, 5];
+    /// let cons = list.cons();
+    ///
+    /// assert_eq!(Some(&1), cons.as_head());
+    /// assert_eq!(Some(&linked_list![2, 3, 4, 5,]), cons.as_tail());
+    /// ```
     pub fn cons(mut self) -> LCons<T> {
         match self.head.take() {
             Some(node) => {
@@ -164,22 +429,108 @@ impl<T> List<T> {
         }
     }
 
+    /// Returns a forward iterator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let list = linked_list![1, 2, 3, 4];
+    ///
+    /// let mut iter = list.iter();
+    /// assert_eq!(iter.next(), Some(&1));
+    /// assert_eq!(iter.next(), Some(&2));
+    /// assert_eq!(iter.next(), Some(&3));
+    /// assert_eq!(iter.next(), Some(&4));
+    /// assert_eq!(iter.next(), None);
+    /// ```
     pub fn iter(&self) -> Iter<'_, T> {
         Iter::from(self)
     }
 
+    /// Returns a forward iterator with mutable references.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3, 4];
+    ///
+    /// for el in list.iter_mut() {
+    ///     *el += 10;
+    /// }
+    ///
+    /// assert_eq!(list.pop(), Some(11));
+    /// assert_eq!(list.pop(), Some(12));
+    /// assert_eq!(list.pop(), Some(13));
+    /// assert_eq!(list.pop(), Some(14));
+    /// assert_eq!(list.pop(), None);
+    /// ```
     pub fn iter_mut(&mut self) -> IterMut<'_, T> {
         IterMut::from(self)
     }
 
+    /// Returns an iterator that uses the predicate to determine whether
+    /// an element should be removed.
+    ///
+    /// If the predicate evaluates to `true`, an element is removed and yielded.
+    ///
+    /// Note that the elements are removed regardless of whether you consume the iterator or not.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![5, 6, 7, 8, 9];
+    ///
+    /// {
+    ///     let mut drain = list.drain_filter(|&mut el| el % 4 > 1);
+    ///     assert_eq!(drain.next(), Some(6));
+    ///     assert_eq!(drain.next(), Some(7));
+    ///     assert_eq!(drain.next(), None);
+    /// }
+    ///
+    /// assert_eq!(&linked_list![5, 8, 9], &list);
+    /// ```
     pub fn drain_filter<F: FnMut(&mut T) -> bool>(&mut self, pred: F) -> DrainFilter<'_, T, F> {
         DrainFilter::from(self, pred)
     }
 
+    /// Remove and discard from the `List` all elements for which the predicate evaluates to `true`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3, 4, 5, 6, 7, 8, 9];
+    ///
+    /// list.remove_if(|el| *el % 3 == 0);
+    ///
+    /// assert_eq!(&linked_list![1, 2, 4, 5, 7, 8], &list);
+    /// ```
     pub fn remove_if<F: FnMut(&mut T) -> bool>(&mut self, pred: F) {
         let _ = self.drain_filter(pred);
     }
 
+    /// Reverses the order of elements in the `List`, in place.
+    ///
+    /// Complexity: *O*(n)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3, 4, 5];
+    ///
+    /// list.reverse();
+    ///
+    /// assert_eq!(&linked_list![5, 4, 3, 2, 1], &list);
+    /// ```
     pub fn reverse(&mut self) {
         let head_node = self.head.as_deref();
         if matches!(head_node, Some(&Node { next: None, .. }) | None) {
@@ -193,6 +544,22 @@ impl<T> List<T> {
         }
     }
 
+    /// Removes and returns the element at the given index.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `at >= len`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3, 4, 5];
+    ///
+    /// assert_eq!(list.remove(3), 4);
+    /// assert_eq!(&linked_list![1, 2, 3, 5], &list);
+    /// ```
     pub fn remove(&mut self, at: usize) -> T {
         unsafe { self.remove_impl(at) }
     }
@@ -206,6 +573,24 @@ impl<T> List<T> {
         node.value
     }
 
+    /// Splits the `List` at the given index.
+    /// Returns everything after the index (inclusive).
+    ///
+    /// # Panics
+    ///
+    /// Panics if `at > len`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3, 4, 5, 6];
+    /// let split = list.split_off(4);
+    ///
+    /// assert_eq!(&linked_list![1, 2, 3, 4], &list);
+    /// assert_eq!(&linked_list![5, 6], &split);
+    /// ```
     pub fn split_off(&mut self, at: usize) -> Self {
         unsafe { self.split_off_impl(at) }
     }
@@ -304,6 +689,18 @@ impl<T: Ord> Ord for List<T> {
 }
 
 impl<T: PartialEq> List<T> {
+    /// Returns `true` if the `List` contains an element equal to the given value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let list = linked_list!["aaa", "bbb", "ccc", "ddd"];
+    ///
+    /// assert!(list.contains(&"ccc"));
+    /// assert!(!list.contains(&"abc"));
+    /// ```
     pub fn contains(&self, x: &T) -> bool {
         self.iter().any(|el| el == x)
     }
