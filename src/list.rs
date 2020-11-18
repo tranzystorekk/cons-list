@@ -661,17 +661,11 @@ impl<T> List<T> {
     }
 
     fn last_node_mut(&mut self) -> Option<&mut Node<T>> {
-        let mut cur = self.head.as_deref_mut();
+        unsafe {
+            let owner = self.get_last_owner();
 
-        while let Some(node) = cur.take() {
-            if node.next.is_none() {
-                return Some(node);
-            }
-
-            cur = node.next.as_deref_mut();
+            (*owner).as_deref_mut()
         }
-
-        None
     }
 }
 
