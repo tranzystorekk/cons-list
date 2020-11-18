@@ -677,8 +677,8 @@ impl<T: Clone> Clone for List<T> {
         for value in self.iter().cloned() {
             let new_node = Node { value, next: None };
 
-            *owner = Some(Box::new(new_node));
-            owner = &mut owner.as_deref_mut().unwrap().next;
+            let node_in_place = owner.get_or_insert(Box::new(new_node));
+            owner = &mut node_in_place.next;
         }
 
         result
