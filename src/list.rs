@@ -184,12 +184,12 @@ impl<T> List<T> {
     ///
     /// let mut list = linked_list![1, 2, 3];
     ///
-    /// assert_eq!(list.pop(), Some(1));
-    /// assert_eq!(list.pop(), Some(2));
-    /// assert_eq!(list.pop(), Some(3));
-    /// assert_eq!(list.pop(), None);
+    /// assert_eq!(list.pop_front(), Some(1));
+    /// assert_eq!(list.pop_front(), Some(2));
+    /// assert_eq!(list.pop_front(), Some(3));
+    /// assert_eq!(list.pop_front(), None);
     /// ```
-    pub fn pop(&mut self) -> Option<T> {
+    pub fn pop_front(&mut self) -> Option<T> {
         self.pop_node().map(|node| node.value)
     }
 
@@ -397,7 +397,7 @@ impl<T> List<T> {
     ///
     /// assert_eq!(list.len(), 3);
     ///
-    /// list.pop();
+    /// list.pop_front();
     /// assert_eq!(list.len(), 2);
     /// ```
     pub fn len(&self) -> usize {
@@ -462,11 +462,7 @@ impl<T> List<T> {
     ///     *el += 10;
     /// }
     ///
-    /// assert_eq!(list.pop(), Some(11));
-    /// assert_eq!(list.pop(), Some(12));
-    /// assert_eq!(list.pop(), Some(13));
-    /// assert_eq!(list.pop(), Some(14));
-    /// assert_eq!(list.pop(), None);
+    /// assert_eq!(&linked_list![11, 12, 13, 14], &list);
     /// ```
     pub fn iter_mut(&mut self) -> IterMut<'_, T> {
         IterMut::from(self)
@@ -831,7 +827,7 @@ impl<T> Iterator for IntoIter<T> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.list.pop()
+        self.list.pop_front()
     }
 }
 

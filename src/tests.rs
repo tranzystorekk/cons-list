@@ -79,10 +79,10 @@ fn list_len_works_correctly() {
 fn items_are_popped_in_lifo_order() {
     let mut l = linked_list![1, 2, 3];
 
-    assert_eq!(l.pop(), Some(1));
-    assert_eq!(l.pop(), Some(2));
-    assert_eq!(l.pop(), Some(3));
-    assert_eq!(l.pop(), None);
+    assert_eq!(l.pop_front(), Some(1));
+    assert_eq!(l.pop_front(), Some(2));
+    assert_eq!(l.pop_front(), Some(3));
+    assert_eq!(l.pop_front(), None);
 }
 
 #[test]
