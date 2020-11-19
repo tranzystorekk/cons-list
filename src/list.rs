@@ -93,7 +93,7 @@ impl<T> List<T> {
     /// let list: List<u32> = List::new();
     /// ```
     pub const fn new() -> Self {
-        List { head: None }
+        Self { head: None }
     }
 
     /// Creates a list from a cons pair `head, tail`.
@@ -118,7 +118,7 @@ impl<T> List<T> {
             next: tail.head.take(),
         };
 
-        List {
+        Self {
             head: Some(Box::new(head)),
         }
     }
@@ -417,7 +417,7 @@ impl<T> List<T> {
     pub fn cons(mut self) -> LCons<T> {
         match self.head.take() {
             Some(node) => {
-                let tail = List { head: node.next };
+                let tail = Self { head: node.next };
                 Cons::Cons(node.value, tail)
             }
             _ => Cons::Nil,
@@ -736,7 +736,7 @@ impl<T: Clone> Clone for List<T> {
             }
 
             // drop unneeded nodes
-            let _ = List {
+            let _ = Self {
                 head: (*owner).take(),
             };
         }
@@ -746,8 +746,8 @@ impl<T: Clone> Clone for List<T> {
 impl<T> From<Cons<T, List<T>>> for List<T> {
     fn from(cons: Cons<T, List<T>>) -> Self {
         match cons {
-            Cons::Cons(head, tail) => List::from_cons(head, tail),
-            Cons::Nil => List::new(),
+            Cons::Cons(head, tail) => Self::from_cons(head, tail),
+            Cons::Nil => Self::new(),
         }
     }
 }
@@ -826,7 +826,7 @@ impl<'a, T> IntoIterator for &'a mut List<T> {
 
 impl<'a, T> Iter<'a, T> {
     pub fn from(list: &'a List<T>) -> Self {
-        Iter {
+        Self {
             current_node: list.head.as_deref(),
         }
     }
@@ -834,7 +834,7 @@ impl<'a, T> Iter<'a, T> {
 
 impl<'a, T> IterMut<'a, T> {
     pub fn from(list: &'a mut List<T>) -> Self {
-        IterMut {
+        Self {
             current_node: list.head.as_deref_mut(),
         }
     }
