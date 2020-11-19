@@ -562,9 +562,7 @@ impl<T> List<T> {
     }
 
     unsafe fn pop_back_impl(&mut self) -> Option<T> {
-        let owner = self.get_last_owner();
-
-        (*owner).take().map(|node| node.value)
+        self.get_last_owner().take().map(|node| node.value)
     }
 
     /// Removes and returns the element at the given index.
@@ -590,7 +588,7 @@ impl<T> List<T> {
     unsafe fn remove_impl(&mut self, at: usize) -> T {
         let owner = self.get_nth_owner(at);
 
-        let mut node = (*owner).take().expect("illegal access past list bounds");
+        let mut node = owner.take().expect("illegal access past list bounds");
         *owner = node.next.take();
 
         node.value
@@ -619,14 +617,12 @@ impl<T> List<T> {
     }
 
     unsafe fn split_off_impl(&mut self, at: usize) -> Self {
-        let owner = self.get_nth_owner(at);
-
         Self {
-            head: (*owner).take(),
+            head: self.get_nth_owner(at).take(),
         }
     }
 
-    unsafe fn get_nth_owner(&mut self, n: usize) -> *mut Link<T> {
+    unsafe fn get_nth_owner(&mut self, n: usize) -> &mut Link<T> {
         let mut cur: *mut _ = &mut self.head;
 
         for _ in 0..n {
@@ -636,10 +632,10 @@ impl<T> List<T> {
             cur = &mut node.next;
         }
 
-        cur
+        &mut *cur
     }
 
-    unsafe fn get_last_owner(&mut self) -> *mut Link<T> {
+    unsafe fn get_last_owner(&mut self) -> &mut Link<T> {
         let mut cur: *mut _ = &mut self.head;
 
         while let Some(node) = (*cur).as_deref_mut() {
@@ -650,7 +646,7 @@ impl<T> List<T> {
             cur = &mut node.next;
         }
 
-        cur
+        &mut *cur
     }
 
     fn pop_node(&mut self) -> Link<T> {
@@ -661,11 +657,7 @@ impl<T> List<T> {
     }
 
     fn last_node_mut(&mut self) -> Option<&mut Node<T>> {
-        unsafe {
-            let owner = self.get_last_owner();
-
-            (*owner).as_deref_mut()
-        }
+        unsafe { self.get_last_owner().as_deref_mut() }
     }
 }
 
