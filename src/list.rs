@@ -5,7 +5,7 @@ use crate::cons::{Cons, LCons};
 use std::cmp::Ordering;
 use std::fmt;
 use std::hash::{Hash, Hasher};
-use std::iter::FusedIterator;
+use std::iter::{FromIterator, FusedIterator};
 
 /// Creates a `List` containing the arguments.
 ///
@@ -661,12 +661,12 @@ impl<T> List<T> {
     }
 }
 
-impl<T: Clone> Clone for List<T> {
-    fn clone(&self) -> Self {
+impl<T> FromIterator<T> for List<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut result = List::new();
         let mut owner = &mut result.head;
 
-        for value in self.iter().cloned() {
+        for value in iter {
             let new_node = Node { value, next: None };
 
             let node_in_place = owner.get_or_insert(Box::new(new_node));
@@ -674,6 +674,12 @@ impl<T: Clone> Clone for List<T> {
         }
 
         result
+    }
+}
+
+impl<T: Clone> Clone for List<T> {
+    fn clone(&self) -> Self {
+        self.iter().cloned().collect()
     }
 }
 
