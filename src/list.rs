@@ -644,6 +644,16 @@ impl<T> List<T> {
         &mut *cur
     }
 
+    unsafe fn get_empty_owner(&mut self) -> &mut Link<T> {
+        let mut cur: *mut _ = &mut self.head;
+
+        while let Some(node) = (*cur).as_deref_mut() {
+            cur = &mut node.next;
+        }
+
+        &mut *cur
+    }
+
     fn pop_node(&mut self) -> Link<T> {
         self.head.take().map(|mut node| {
             self.head = node.next.take();
@@ -656,17 +666,25 @@ impl<T> List<T> {
     }
 }
 
+impl<T> Extend<T> for List<T> {
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        unsafe {
+            let mut owner = self.get_empty_owner();
+
+            for value in iter {
+                let new_node = Node { value, next: None };
+
+                let node_in_place = owner.get_or_insert(Box::new(new_node));
+                owner = &mut node_in_place.next;
+            }
+        }
+    }
+}
+
 impl<T> FromIterator<T> for List<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut result = List::new();
-        let mut owner = &mut result.head;
-
-        for value in iter {
-            let new_node = Node { value, next: None };
-
-            let node_in_place = owner.get_or_insert(Box::new(new_node));
-            owner = &mut node_in_place.next;
-        }
+        result.extend(iter);
 
         result
     }
