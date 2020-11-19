@@ -36,7 +36,7 @@ macro_rules! tail_method_body {
 /// ```
 #[macro_export]
 macro_rules! head_matches {
-    ($cons:expr, $($head:pat)|+ $( if $guard:expr )?) => {
+    ($cons:expr, $($head:pat)|+ $( if $guard:expr )? $(,)?) => {
         matches!(
             $cons,
             $( $crate::Cons::Cons($head, _) )|+
