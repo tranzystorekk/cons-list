@@ -22,7 +22,7 @@ macro_rules! tail_method_body {
     };
 }
 
-/// A macro shortcut for checking if the head portion of a `Cons` matches a given pattern.
+/// A macro shortcut for checking if the head portion of a [`Cons`] matches a given pattern.
 ///
 /// # Examples
 ///
@@ -49,7 +49,7 @@ pub(crate) type LCons<T> = Cons<T, List<T>>;
 
 /// An enum that allows Cons-like operations and pattern matching on a `List`.
 ///
-/// Obtained via `List::cons()`.
+/// Obtained via [`List::cons()`].
 pub enum Cons<T, L> {
     /// A pair of a head element and a tail list (everything excluding the head).
     Cons(T, L),
@@ -185,7 +185,7 @@ impl<T> Cons<T, List<T>> {
 }
 
 impl<T, L> Cons<T, L> {
-    /// Returns `true` if this cons is a `Cons`.
+    /// Returns `true` if this cons is a [`Cons`](Cons::Cons).
     ///
     /// # Examples
     ///
@@ -200,7 +200,7 @@ impl<T, L> Cons<T, L> {
         matches!(self, Cons::Cons(_, _))
     }
 
-    /// Returns `true` if this cons is a `Nil`.
+    /// Returns `true` if this cons is a [`Nil`](Cons::Nil).
     ///
     /// # Examples
     ///

@@ -13,7 +13,7 @@ use std::iter::{FromIterator, FusedIterator};
 ///
 /// # Examples
 ///
-/// This macro is similar in syntax to the `vec!` macro:
+/// This macro is similar in syntax to the [`vec!`] macro:
 /// ```
 /// use cons_list::linked_list;
 ///
@@ -55,7 +55,8 @@ type Link<T> = Option<Box<Node<T>>>;
 /// A single-linked list.
 ///
 /// This list internally keeps only its head,
-/// so operations like `push_back`, `last` or `len` will execute in *O*(n).
+/// so operations like [`List::push_back()`], [`List::last()`] or [`List::len()`]
+/// will execute in *O*(n).
 #[derive(Default)]
 pub struct List<T> {
     head: Link<T>,
@@ -168,7 +169,7 @@ impl<T> List<T> {
     }
 
     /// Removes the first element from the `List` and returns it,
-    /// or `None` if the `List` is empty.
+    /// or [`None`] if the `List` is empty.
     ///
     /// Complexity: *O*(1)
     ///
@@ -209,7 +210,7 @@ impl<T> List<T> {
     }
 
     /// Provides a reference to the first element,
-    /// or `None` if the `List` is empty.
+    /// or [`None`] if the `List` is empty.
     ///
     /// Complexity: *O*(1)
     ///
@@ -227,7 +228,7 @@ impl<T> List<T> {
     }
 
     /// Provides a mutable reference to the first element,
-    /// or `None` if the `List` is empty.
+    /// or [`None`] if the `List` is empty.
     ///
     /// Complexity: *O*(1)
     ///
@@ -249,7 +250,7 @@ impl<T> List<T> {
     }
 
     /// Provides a reference to the last element,
-    /// or `None` if the `List` is empty.
+    /// or [`None`] if the `List` is empty.
     ///
     /// Complexity: *O*(n)
     ///
@@ -267,7 +268,7 @@ impl<T> List<T> {
     }
 
     /// Provides a mutable reference to the last element,
-    /// or `None` if the `List` is empty.
+    /// or [`None`] if the `List` is empty.
     ///
     /// Complexity: *O*(n)
     ///
@@ -401,7 +402,7 @@ impl<T> List<T> {
 
     /// Converts from `List<T>` to `Cons<T, List<T>>`.
     ///
-    /// See `Cons` for more information.
+    /// See [`Cons`] for more information.
     ///
     /// # Examples
     ///
@@ -555,7 +556,7 @@ impl<T> List<T> {
     }
 
     /// Removes the last element from the `List` and returns it,
-    /// or `None` if the `List` is empty.
+    /// or [`None`] if the `List` is empty.
     ///
     /// Complexity: *O*(n)
     ///
