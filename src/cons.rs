@@ -196,7 +196,7 @@ impl<T, L> Cons<T, L> {
     ///
     /// assert!(list.cons().is_cons());
     /// ```
-    pub fn is_cons(&self) -> bool {
+    pub const fn is_cons(&self) -> bool {
         matches!(self, Cons::Cons(_, _))
     }
 
@@ -211,7 +211,7 @@ impl<T, L> Cons<T, L> {
     ///
     /// assert!(list.cons().is_nil());
     /// ```
-    pub fn is_nil(&self) -> bool {
+    pub const fn is_nil(&self) -> bool {
         matches!(self, Cons::Nil)
     }
 }

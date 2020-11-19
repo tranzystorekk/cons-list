@@ -138,7 +138,7 @@ impl<T> List<T> {
     /// list.push_front("foo");
     /// assert!(!list.is_empty());
     /// ```
-    pub fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         self.head.is_none()
     }
 
