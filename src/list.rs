@@ -39,13 +39,8 @@ macro_rules! linked_list {
     };
     ($($x:expr),+ $(,)?) => {
         {
-            let mut result = $crate::List::new();
             let arr = [$($x),+];
-            for el in arr.iter().cloned().rev() {
-                result.push_front(el);
-            }
-
-            result
+            arr.iter().cloned().collect::<$crate::List<_>>()
         }
     };
 }
