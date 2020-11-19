@@ -463,6 +463,25 @@ impl<T> List<T> {
         IterMut::from(self)
     }
 
+    /// Returns `true` if the `List` contains an element equal to the given value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let list = linked_list!["aaa", "bbb", "ccc", "ddd"];
+    ///
+    /// assert!(list.contains(&"ccc"));
+    /// assert!(!list.contains(&"abc"));
+    /// ```
+    pub fn contains(&self, x: &T) -> bool
+    where
+        T: PartialEq,
+    {
+        self.iter().any(|el| el == x)
+    }
+
     /// Returns an iterator that uses the predicate to determine whether
     /// an element should be removed.
     ///
@@ -755,24 +774,6 @@ impl<T: PartialOrd> PartialOrd for List<T> {
 impl<T: Ord> Ord for List<T> {
     fn cmp(&self, other: &Self) -> Ordering {
         self.iter().cmp(other)
-    }
-}
-
-impl<T: PartialEq> List<T> {
-    /// Returns `true` if the `List` contains an element equal to the given value.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use cons_list::linked_list;
-    ///
-    /// let list = linked_list!["aaa", "bbb", "ccc", "ddd"];
-    ///
-    /// assert!(list.contains(&"ccc"));
-    /// assert!(!list.contains(&"abc"));
-    /// ```
-    pub fn contains(&self, x: &T) -> bool {
-        self.iter().any(|el| el == x)
     }
 }
 
