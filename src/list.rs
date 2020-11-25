@@ -544,7 +544,7 @@ impl<T> List<T> {
     /// ```
     pub fn reverse(&mut self) {
         let head_node = self.head.as_deref();
-        if matches!(head_node, Some(Node { next: None, .. }) | None) {
+        if let Some(Node { next: None, .. }) | None = head_node {
             return;
         }
 
