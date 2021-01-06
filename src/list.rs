@@ -674,6 +674,17 @@ impl<T> List<T> {
         &mut *cur
     }
 
+    unsafe fn extend_from_iter<I: Iterator<Item = T>>(&mut self, iter: I) {
+        let mut owner = self.get_empty_owner();
+
+        for value in iter {
+            let new_node = Node { value, next: None };
+
+            let node_in_place = owner.get_or_insert(Box::new(new_node));
+            owner = &mut node_in_place.next;
+        }
+    }
+
     fn pop_node(&mut self) -> Link<T> {
         self.head.take().map(|mut node| {
             self.head = node.next.take();
@@ -689,14 +700,7 @@ impl<T> List<T> {
 impl<T> Extend<T> for List<T> {
     fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
         unsafe {
-            let mut owner = self.get_empty_owner();
-
-            for value in iter {
-                let new_node = Node { value, next: None };
-
-                let node_in_place = owner.get_or_insert(Box::new(new_node));
-                owner = &mut node_in_place.next;
-            }
+            self.extend_from_iter(iter.into_iter());
         }
     }
 }
@@ -704,14 +708,7 @@ impl<T> Extend<T> for List<T> {
 impl<'a, T: 'a + Copy> Extend<&'a T> for List<T> {
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
         unsafe {
-            let mut owner = self.get_empty_owner();
-
-            for &value in iter {
-                let new_node = Node { value, next: None };
-
-                let node_in_place = owner.get_or_insert(Box::new(new_node));
-                owner = &mut node_in_place.next;
-            }
+            self.extend_from_iter(iter.into_iter().copied());
         }
     }
 }
