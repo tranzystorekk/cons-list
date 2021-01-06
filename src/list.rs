@@ -701,6 +701,21 @@ impl<T> Extend<T> for List<T> {
     }
 }
 
+impl<'a, T: 'a + Copy> Extend<&'a T> for List<T> {
+    fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
+        unsafe {
+            let mut owner = self.get_empty_owner();
+
+            for &value in iter {
+                let new_node = Node { value, next: None };
+
+                let node_in_place = owner.get_or_insert(Box::new(new_node));
+                owner = &mut node_in_place.next;
+            }
+        }
+    }
+}
+
 impl<T> FromIterator<T> for List<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut result = List::new();

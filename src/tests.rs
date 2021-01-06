@@ -384,3 +384,15 @@ fn remove_if_works() {
     let expected = [1, 3, 5];
     itertools::assert_equal(&expected, &l);
 }
+
+#[test]
+fn list_can_be_extended_from_a_copy_type() {
+    let v = vec![4, 5, 6, 7];
+
+    let mut l = linked_list![1, 2, 3];
+
+    l.extend(&v);
+
+    let expected = [1, 2, 3, 4, 5, 6, 7];
+    itertools::assert_equal(&expected, &l);
+}
