@@ -108,7 +108,7 @@ fn tail_can_be_consed() {
 
     let tail = l
         .cons()
-        .tail()
+        .into_tail()
         .map(|list| list.into_iter().collect::<Vec<i32>>());
 
     assert_eq!(tail, Some(vec![2, 3]));
@@ -118,7 +118,7 @@ fn tail_can_be_consed() {
 fn no_tail_when_consing_one_element_list() {
     let l = linked_list![1];
 
-    assert!(matches!(l.cons().tail(), None));
+    assert!(matches!(l.cons().into_tail(), None));
 }
 
 #[test]

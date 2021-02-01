@@ -68,9 +68,9 @@ impl<T> Cons<T, List<T>> {
     /// let list = linked_list![1, 2];
     /// let cons = list.cons();
     ///
-    /// assert!(matches!(cons.head(), Some(1)));
+    /// assert!(matches!(cons.into_head(), Some(1)));
     /// ```
-    pub fn head(self) -> Option<T> {
+    pub fn into_head(self) -> Option<T> {
         head_method_body!(self)
     }
 
@@ -135,7 +135,7 @@ impl<T> Cons<T, List<T>> {
     /// Converts from `Cons<T, List<T>>` to `Option<List<T>>`, discarding the head.
     ///
     /// Note: discards tail and returns `None` if the tail is empty.
-    pub fn tail(self) -> Option<List<T>> {
+    pub fn into_tail(self) -> Option<List<T>> {
         tail_method_body!(self)
     }
 
