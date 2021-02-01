@@ -318,6 +318,38 @@ impl<T> List<T> {
         }
     }
 
+    /// Inserts an element at the given position.
+    ///
+    /// Complexity: *O*(n)
+    ///
+    /// # Panics
+    ///
+    /// Panics if `at > len`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let mut list = linked_list![1, 2, 3, 5, 6];
+    ///
+    /// list.insert(3, 4);
+    ///
+    /// assert_eq!(&linked_list![1, 2, 3, 4, 5, 6], &list);
+    /// ```
+    pub fn insert(&mut self, at: usize, value: T) {
+        unsafe {
+            let nth = self.get_nth_owner(at);
+
+            let new_node = Node {
+                value,
+                next: nth.take(),
+            };
+
+            nth.get_or_insert(Box::new(new_node));
+        }
+    }
+
     /// Moves all elements from `other` to the back of the `List`.
     ///
     /// After this operation, `other` becomes empty.
