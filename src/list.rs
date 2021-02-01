@@ -338,16 +338,14 @@ impl<T> List<T> {
     /// assert_eq!(&linked_list![1, 2, 3, 4, 5, 6], &list);
     /// ```
     pub fn insert(&mut self, at: usize, value: T) {
-        unsafe {
-            let nth = self.get_nth_owner(at);
+        let nth = unsafe { self.get_nth_owner(at) };
 
-            let new_node = Node {
-                value,
-                next: nth.take(),
-            };
+        let new_node = Node {
+            value,
+            next: nth.take(),
+        };
 
-            nth.get_or_insert(Box::new(new_node));
-        }
+        nth.replace(Box::new(new_node));
     }
 
     /// Moves all elements from `other` to the back of the `List`.
@@ -629,11 +627,7 @@ impl<T> List<T> {
     /// assert_eq!(&linked_list![1, 2, 3, 5], &list);
     /// ```
     pub fn remove(&mut self, at: usize) -> T {
-        unsafe { self.remove_impl(at) }
-    }
-
-    unsafe fn remove_impl(&mut self, at: usize) -> T {
-        let owner = self.get_nth_owner(at);
+        let owner = unsafe { self.get_nth_owner(at) };
 
         let mut node = owner.take().expect("illegal access past list bounds");
         *owner = node.next.take();
