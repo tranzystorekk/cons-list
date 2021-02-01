@@ -406,3 +406,11 @@ fn list_can_be_inserted_into() {
     let expected = [1, 2, 3, 4, 5];
     itertools::assert_equal(&expected, &l);
 }
+
+#[test]
+#[should_panic]
+fn insert_panics_when_past_bounds() {
+    let mut l = linked_list![1, 2, 3];
+
+    l.insert(4, 0);
+}
