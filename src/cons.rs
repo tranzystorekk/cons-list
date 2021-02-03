@@ -221,6 +221,25 @@ impl<T> Cons<T, List<T>> {
             _ => Cons::Nil,
         }
     }
+
+    /// Converts this cons into `Option<(T, List<T>)>`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let list = linked_list![1, 2, 3, 4, 5];
+    /// let cons = list.cons();
+    ///
+    /// assert_eq!(cons.into_option(), Some((1, linked_list![2, 3, 4, 5])));
+    /// ```
+    pub fn into_option(self) -> Option<(T, List<T>)> {
+        match self {
+            Cons::Cons(head, tail) => Some((head, tail)),
+            _ => None,
+        }
+    }
 }
 
 impl<T, L> Cons<T, L> {
