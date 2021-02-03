@@ -135,6 +135,17 @@ impl<T> Cons<T, List<T>> {
     /// Converts from `Cons<T, List<T>>` to `Option<List<T>>`, discarding the head.
     ///
     /// Note: discards tail and returns `None` if the tail is empty.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let list = linked_list![1, 2, 3, 4, 5];
+    /// let cons = list.cons();
+    ///
+    /// assert_eq!(cons.into_tail(), Some(linked_list![2, 3, 4, 5]));
+    /// ```
     pub fn into_tail(self) -> Option<List<T>> {
         tail_method_body!(self)
     }
@@ -142,6 +153,17 @@ impl<T> Cons<T, List<T>> {
     /// Converts from `&Cons<T, List<T>>` to `Option<&List<T>>`.
     ///
     /// Note: returns `None` if the tail is empty.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let list = linked_list![1, 2, 3, 4, 5];
+    /// let cons = list.cons();
+    ///
+    /// assert_eq!(cons.as_tail(), Some(&linked_list![2, 3, 4, 5]));
+    /// ```
     pub fn as_tail(&self) -> Option<&List<T>> {
         tail_method_body!(self)
     }
@@ -149,6 +171,23 @@ impl<T> Cons<T, List<T>> {
     /// Converts from `&mut Cons<T, List<T>>` to `Option<&mut List<T>>`.
     ///
     /// Note: returns `None` if the tail is empty.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::linked_list;
+    ///
+    /// let list = linked_list![1, 2, 3, 4, 5];
+    /// let mut cons = list.cons();
+    ///
+    /// if let Some(l) = cons.as_mut_tail() {
+    ///     for el in l {
+    ///         *el *= 10;
+    ///     }
+    /// }
+    ///
+    /// assert_eq!(cons.as_tail(), Some(&linked_list![20, 30, 40, 50]));
+    /// ```
     pub fn as_mut_tail(&mut self) -> Option<&mut List<T>> {
         tail_method_body!(self)
     }
