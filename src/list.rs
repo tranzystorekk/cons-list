@@ -9,7 +9,10 @@ use std::iter::{FromIterator, FusedIterator};
 
 /// Creates a `List` containing the arguments.
 ///
-/// All elements are cloned and pushed into the list.
+/// For `linked_list![x; n]`, the given element is cloned to fill the list.
+///
+/// For `linked_list![x, y, z, ...]`, the elements are pushed into the list
+/// ([Clone](std::clone::Clone) not required).
 ///
 /// # Examples
 ///
@@ -25,24 +28,20 @@ macro_rules! linked_list {
     () => {
         $crate::List::new()
     };
-    ($el:expr; $n:expr) => {
-        {
-            let e = $el;
-            let size = $n;
-            let mut result = $crate::List::new();
-            for _ in 0..size {
-                result.push_front(e.clone());
-            }
+    ($el:expr; $n:expr) => {{
+        let e = $el;
+        let size = $n;
+        let mut result = $crate::List::new();
+        for _ in 0..size {
+            result.push_front(e.clone());
+        }
 
-            result
-        }
-    };
-    ($($x:expr),+ $(,)?) => {
-        {
-            let arr = [$($x),+];
-            arr.iter().cloned().collect::<$crate::List<_>>()
-        }
-    };
+        result
+    }};
+    ($($x:expr),+ $(,)?) => {{
+        let arr_it = ::std::array::IntoIter::new([$($x),+]);
+        arr_it.collect::<$crate::List<_>>()
+    }};
 }
 
 struct Node<T> {
