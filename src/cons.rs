@@ -2,7 +2,7 @@
 
 use crate::list::List;
 
-use std::ops::Deref;
+use std::ops::{Deref, DerefMut};
 
 macro_rules! head_method_body {
     ($myself:ident) => {
@@ -217,7 +217,33 @@ impl<T> Cons<T, List<T>> {
         T: Deref,
     {
         match self {
-            Cons::Cons(ref head, ref tail) => Cons::Cons(head.deref(), tail),
+            Cons::Cons(head, tail) => Cons::Cons(head.deref(), tail),
+            _ => Cons::Nil,
+        }
+    }
+
+    /// Converts from `&mut Cons<T, List<T>>` to `Cons<&mut T::Target, &List<T>>`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use cons_list::{head_matches, linked_list, Cons};
+    ///
+    /// let list = linked_list![Box::new(1), Box::new(2)];
+    /// let mut cons = list.cons();
+    ///
+    /// if let Cons::Cons(head, _) = cons.as_deref_mut() {
+    ///     *head = 3;
+    /// }
+    ///
+    /// assert!(head_matches!(cons.as_deref(), &3));
+    /// ```
+    pub fn as_deref_mut(&mut self) -> Cons<&mut T::Target, &mut List<T>>
+    where
+        T: DerefMut,
+    {
+        match self {
+            Cons::Cons(head, tail) => Cons::Cons(head.deref_mut(), tail),
             _ => Cons::Nil,
         }
     }
