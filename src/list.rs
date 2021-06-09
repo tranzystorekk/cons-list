@@ -887,13 +887,7 @@ impl<'a, T, F: FnMut(&mut T) -> bool> DrainFilter<'a, T, F> {
     }
 
     fn next_node(&mut self) -> Link<T> {
-        while let Some(node) = unsafe { self.deref_trans() } {
-            if (self.pred)(&mut node.value) {
-                break;
-            }
-
-            self.owner = &mut node.next;
-        }
+        unsafe { self.move_to_next_drained() };
 
         self.owner.take().map(|mut node| {
             *self.owner = node.next.take();
@@ -901,8 +895,16 @@ impl<'a, T, F: FnMut(&mut T) -> bool> DrainFilter<'a, T, F> {
         })
     }
 
-    unsafe fn deref_trans<'b>(&mut self) -> Option<&'b mut Node<T>> {
-        std::mem::transmute(self.owner.as_deref_mut())
+    unsafe fn move_to_next_drained(&mut self) {
+        let mut ptr: *mut _ = self.owner;
+        while let Some(node) = (*ptr).as_deref_mut() {
+            if (self.pred)(&mut node.value) {
+                break;
+            }
+
+            self.owner = &mut node.next;
+            ptr = self.owner;
+        }
     }
 }
 
