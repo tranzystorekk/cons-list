@@ -39,7 +39,7 @@ macro_rules! linked_list {
         result
     }};
     ($($x:expr),+ $(,)?) => {{
-        let arr_it = ::std::array::IntoIter::new([$($x),+]);
+        let arr_it = ::std::iter::IntoIterator::into_iter([$($x),+]);
         arr_it.collect::<$crate::List<_>>()
     }};
 }
@@ -705,7 +705,7 @@ impl<T> List<T> {
         for value in iter {
             let new_node = Node { value, next: None };
 
-            let node_in_place = owner.get_or_insert(Box::new(new_node));
+            let node_in_place = owner.insert(Box::new(new_node));
             owner = &mut node_in_place.next;
         }
     }
@@ -769,7 +769,7 @@ impl<T: Clone> Clone for List<T> {
             for value in iter_other.cloned() {
                 let new_node = Node { value, next: None };
 
-                let node_in_place = (*owner).get_or_insert(Box::new(new_node));
+                let node_in_place = (*owner).insert(Box::new(new_node));
                 owner = &mut node_in_place.next;
             }
 
