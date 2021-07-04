@@ -344,7 +344,7 @@ impl<T> List<T> {
             next: nth.take(),
         };
 
-        nth.replace(Box::new(new_node));
+        nth.insert(Box::new(new_node));
     }
 
     /// Moves all elements from `other` to the back of the `List`.
@@ -580,7 +580,7 @@ impl<T> List<T> {
         let mut cur = self.head.take();
         while let Some(mut node) = cur {
             cur = std::mem::replace(&mut node.next, self.head.take());
-            self.head.replace(node);
+            self.head.insert(node);
         }
     }
 
