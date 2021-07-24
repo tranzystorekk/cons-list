@@ -48,7 +48,7 @@ fn list_can_be_pushed_back_to() {
     l.push_back(4);
 
     let expected = [1, 2, 3, 4];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
@@ -58,7 +58,7 @@ fn head_and_tail_can_be_consed_together() {
     let consed = List::from_cons(4, l);
 
     let expected = [4, 3, 2, 1];
-    itertools::assert_equal(&expected, &consed);
+    itertools::assert_equal(expected, consed);
 }
 
 #[test]
@@ -126,7 +126,7 @@ fn list_can_be_iterated() {
     let l = linked_list![1, 2, 3];
 
     let expected = [1, 2, 3];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
@@ -136,16 +136,16 @@ fn list_can_be_mutably_iterated() {
     l.iter_mut().for_each(|el| *el *= 2);
 
     let expected = [2, 4, 6];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
 fn list_can_be_looped_over() {
     let l = linked_list![1, 2, 3];
 
-    let mut x = [1, 2, 3].iter();
+    let mut x = IntoIterator::into_iter([1, 2, 3]);
 
-    for el in &l {
+    for el in l {
         assert_eq!(el, x.next().unwrap());
     }
 }
@@ -159,14 +159,14 @@ fn list_can_be_mutably_looped_over() {
     }
 
     let expected = [2, 4, 6];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
 fn list_can_be_transformed_into_iterator() {
     let l = linked_list![1, 2, 3];
 
-    let expected = [1, 2, 3].iter().copied();
+    let expected = [1, 2, 3];
     itertools::assert_equal(expected, l);
 }
 
@@ -198,7 +198,7 @@ fn reverse_works_on_regular_lists() {
     l.reverse();
 
     let expected = [5, 4, 3, 2, 1];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
@@ -208,7 +208,7 @@ fn reverse_works_on_one_element_lists() {
     l.reverse();
 
     let expected = [1];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
@@ -228,7 +228,7 @@ fn list_can_be_appended_to_another() {
     first.append(&mut second);
 
     let expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    itertools::assert_equal(&expected, &first);
+    itertools::assert_equal(expected, first);
     assert!(second.is_empty());
 }
 
@@ -240,7 +240,7 @@ fn list_can_be_prepended_to_another() {
     first.prepend(&mut second);
 
     let expected = [7, 8, 9, 1, 2, 3, 4, 5];
-    itertools::assert_equal(&expected, &first);
+    itertools::assert_equal(expected, first);
     assert!(second.is_empty());
 }
 
@@ -250,8 +250,8 @@ fn list_can_be_cloned() {
     let clone = l.clone();
 
     let expected = ["abc", "deadbeef", "Some other string"];
-    itertools::assert_equal(&expected, &l);
-    itertools::assert_equal(&expected, &clone);
+    itertools::assert_equal(expected, l);
+    itertools::assert_equal(expected, clone);
 }
 
 #[test]
@@ -301,11 +301,11 @@ fn drain_filter_works() {
     let mut l = linked_list![1, 2, 3, 4, 5, 6];
 
     let drain_odd = l.drain_filter(|&mut n| n % 2 != 0);
-    let expected_drained = [1, 3, 5].iter().copied();
+    let expected_drained = [1, 3, 5];
     itertools::assert_equal(expected_drained, drain_odd);
 
     let expected_remaining = [2, 4, 6];
-    itertools::assert_equal(&expected_remaining, &l);
+    itertools::assert_equal(expected_remaining, l);
 }
 
 #[test]
@@ -323,7 +323,7 @@ fn drain_filter_works_when_empty() {
     }
 
     let expected = [1, 2, 3, 4, 5, 6];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
@@ -333,7 +333,7 @@ fn drain_filter_drains_even_if_not_consumed() {
     let _ = l.drain_filter(|s| s.chars().all(char::is_lowercase));
 
     let expected = ["dEf", "XYZ"];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
@@ -343,7 +343,7 @@ fn remove_works() {
     assert_eq!(4, l.remove(3));
 
     let expected = [1, 2, 3, 5, 6];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
@@ -361,10 +361,10 @@ fn split_off_works() {
     let split = l.split_off(3);
 
     let expected_original = [1, 2, 3];
-    itertools::assert_equal(&expected_original, &l);
+    itertools::assert_equal(expected_original, l);
 
     let expected_split = [4, 5, 6, 7, 8, 9, 10];
-    itertools::assert_equal(&expected_split, &split);
+    itertools::assert_equal(expected_split, split);
 }
 
 #[test]
@@ -382,7 +382,7 @@ fn remove_if_works() {
     l.remove_if(|&mut n| n % 2 == 0);
 
     let expected = [1, 3, 5];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
@@ -394,7 +394,7 @@ fn list_can_be_extended_from_a_copy_type() {
     l.extend(&v);
 
     let expected = [1, 2, 3, 4, 5, 6, 7];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
@@ -404,7 +404,7 @@ fn list_can_be_inserted_into() {
     l.insert(2, 3);
 
     let expected = [1, 2, 3, 4, 5];
-    itertools::assert_equal(&expected, &l);
+    itertools::assert_equal(expected, l);
 }
 
 #[test]
