@@ -414,3 +414,12 @@ fn insert_panics_when_past_bounds() {
 
     l.insert(4, 0);
 }
+
+#[test]
+fn list_can_be_created_from_array() {
+    let expected = [1, 2, 3, 4];
+
+    let l: List<i32> = expected.into();
+
+    itertools::assert_equal(expected, l);
+}
