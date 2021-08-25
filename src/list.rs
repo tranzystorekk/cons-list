@@ -38,10 +38,9 @@ macro_rules! linked_list {
 
         result
     }};
-    ($($x:expr),+ $(,)?) => {{
-        let arr_it = ::std::iter::IntoIterator::into_iter([$($x),+]);
-        arr_it.collect::<$crate::List<_>>()
-    }};
+    ($($x:expr),+ $(,)?) => {
+        $crate::List::from([$($x),+])
+    };
 }
 
 struct Node<T> {
