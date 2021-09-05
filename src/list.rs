@@ -71,6 +71,7 @@ pub struct IterMut<'a, T> {
 }
 
 /// An iterator that takes ownership of a `List`.
+#[derive(Clone)]
 pub struct IntoIter<T> {
     list: List<T>,
 }
@@ -956,6 +957,58 @@ impl<T, F: FnMut(&mut T) -> bool> Iterator for DrainFilter<'_, T, F> {
 
     fn next(&mut self) -> Option<Self::Item> {
         self.next_node().map(|node| node.value)
+    }
+}
+
+/// This [`Clone`] impl in fact behaves like [`Copy`].
+/// Implicit copying is disabled to avoid ambiguous usage bugs.
+impl<'a, T> Clone for Iter<'a, T> {
+    fn clone(&self) -> Self {
+        Self {
+            current_node: self.current_node,
+        }
+    }
+}
+
+impl<T: fmt::Debug> fmt::Debug for IntoIter<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("IntoIter").field(&self.list).finish()
+    }
+}
+
+impl<'a, T: fmt::Debug> fmt::Debug for Iter<'a, T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("Iter")
+            .field(&DebugIter(self.clone()))
+            .finish()
+    }
+}
+
+impl<'a, T: fmt::Debug> fmt::Debug for IterMut<'a, T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("IterMut")
+            .field(&DebugIter(Iter {
+                current_node: self.current_node.as_deref(),
+            }))
+            .finish()
+    }
+}
+
+impl<'a, T: fmt::Debug, F: FnMut(&mut T) -> bool> fmt::Debug for DrainFilter<'a, T, F> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("DrainFilter")
+            .field(&DebugIter(Iter {
+                current_node: self.owner.as_deref(),
+            }))
+            .finish()
+    }
+}
+
+struct DebugIter<'a, T>(Iter<'a, T>);
+
+impl<'a, T: fmt::Debug> fmt::Debug for DebugIter<'a, T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_list().entries(self.0.clone()).finish()
     }
 }
 
