@@ -423,3 +423,23 @@ fn list_can_be_created_from_array() {
 
     itertools::assert_equal(expected, l);
 }
+
+#[test]
+fn list_can_be_debugged() {
+    let l = linked_list![1, 2, 3];
+
+    assert_eq!("[1, 2, 3]", format!("{:?}", l));
+}
+
+#[test]
+fn list_iterators_can_be_debugged() {
+    let mut l = linked_list![1, 2, 3];
+
+    assert_eq!("Iter([1, 2, 3])", format!("{:?}", l.iter()));
+    assert_eq!("IterMut([1, 2, 3])", format!("{:?}", l.iter_mut()));
+    assert_eq!(
+        "DrainFilter([1, 2, 3])",
+        format!("{:?}", l.drain_filter(|_| false))
+    );
+    assert_eq!("IntoIter([1, 2, 3])", format!("{:?}", l.into_iter()));
+}
