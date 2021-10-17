@@ -110,7 +110,7 @@ impl<T> List<T> {
     ///
     /// let list = List::from_cons(head, tail);
     ///
-    /// assert_eq!(&linked_list![1, 2, 3, 4, 5], &list);
+    /// assert_eq!(linked_list![1, 2, 3, 4, 5], list);
     /// ```
     pub fn from_cons(head: T, mut tail: List<T>) -> Self {
         let head = Node {
@@ -156,7 +156,7 @@ impl<T> List<T> {
     /// list.push_front(2);
     /// list.push_front(1);
     ///
-    /// assert_eq!(&linked_list![1, 2], &list);
+    /// assert_eq!(linked_list![1, 2], list);
     /// ```
     pub fn push_front(&mut self, elem: T) {
         let new_node = Node {
@@ -242,7 +242,7 @@ impl<T> List<T> {
     ///     *head += 10;
     /// }
     ///
-    /// assert_eq!(&linked_list![11, 2, 3], &list);
+    /// assert_eq!(linked_list![11, 2, 3], list);
     /// ```
     pub fn head_mut(&mut self) -> Option<&mut T> {
         self.head.as_mut().map(|node| &mut node.value)
@@ -282,7 +282,7 @@ impl<T> List<T> {
     ///     *last += 10;
     /// }
     ///
-    /// assert_eq!(&linked_list![1, 2, 13], &list);
+    /// assert_eq!(linked_list![1, 2, 13], list);
     /// ```
     pub fn last_mut(&mut self) -> Option<&mut T> {
         self.iter_mut().last()
@@ -302,7 +302,7 @@ impl<T> List<T> {
     /// list.push_back(1);
     /// list.push_back(2);
     ///
-    /// assert_eq!(&linked_list![1, 2], &list);
+    /// assert_eq!(linked_list![1, 2], list);
     /// ```
     pub fn push_back(&mut self, elem: T) {
         let new_node = Node {
@@ -334,7 +334,7 @@ impl<T> List<T> {
     ///
     /// list.insert(3, 4);
     ///
-    /// assert_eq!(&linked_list![1, 2, 3, 4, 5, 6], &list);
+    /// assert_eq!(linked_list![1, 2, 3, 4, 5, 6], list);
     /// ```
     pub fn insert(&mut self, at: usize, value: T) {
         let nth = unsafe { self.get_nth_owner(at) };
@@ -366,7 +366,7 @@ impl<T> List<T> {
     /// list.append(&mut second);
     ///
     /// assert!(second.is_empty());
-    /// assert_eq!(&linked_list![1, 2, 3, 4, 5, 6], &list);
+    /// assert_eq!(linked_list![1, 2, 3, 4, 5, 6], list);
     /// ```
     pub fn append(&mut self, other: &mut List<T>) {
         if other.is_empty() {
@@ -400,7 +400,7 @@ impl<T> List<T> {
     /// list.prepend(&mut second);
     ///
     /// assert!(second.is_empty());
-    /// assert_eq!(&linked_list![1, 2, 3, 4, 5, 6], &list);
+    /// assert_eq!(linked_list![1, 2, 3, 4, 5, 6], list);
     /// ```
     pub fn prepend(&mut self, other: &mut List<T>) {
         if let Some(node) = other.last_node_mut() {
@@ -487,7 +487,7 @@ impl<T> List<T> {
     ///     *el += 10;
     /// }
     ///
-    /// assert_eq!(&linked_list![11, 12, 13, 14], &list);
+    /// assert_eq!(linked_list![11, 12, 13, 14], list);
     /// ```
     pub fn iter_mut(&mut self) -> IterMut<'_, T> {
         IterMut::from(self)
@@ -533,7 +533,7 @@ impl<T> List<T> {
     ///     assert_eq!(drain.next(), None);
     /// }
     ///
-    /// assert_eq!(&linked_list![5, 8, 9], &list);
+    /// assert_eq!(linked_list![5, 8, 9], list);
     /// ```
     pub fn drain_filter<F: FnMut(&mut T) -> bool>(&mut self, pred: F) -> DrainFilter<'_, T, F> {
         DrainFilter::from(self, pred)
@@ -550,7 +550,7 @@ impl<T> List<T> {
     ///
     /// list.remove_if(|el| *el % 3 == 0);
     ///
-    /// assert_eq!(&linked_list![1, 2, 4, 5, 7, 8], &list);
+    /// assert_eq!(linked_list![1, 2, 4, 5, 7, 8], list);
     /// ```
     pub fn remove_if<F: FnMut(&mut T) -> bool>(&mut self, pred: F) {
         let _ = self.drain_filter(pred);
@@ -569,7 +569,7 @@ impl<T> List<T> {
     ///
     /// list.reverse();
     ///
-    /// assert_eq!(&linked_list![5, 4, 3, 2, 1], &list);
+    /// assert_eq!(linked_list![5, 4, 3, 2, 1], list);
     /// ```
     pub fn reverse(&mut self) {
         let head_node = self.head.as_deref();
@@ -623,7 +623,7 @@ impl<T> List<T> {
     /// let mut list = linked_list![1, 2, 3, 4, 5];
     ///
     /// assert_eq!(list.remove(3), 4);
-    /// assert_eq!(&linked_list![1, 2, 3, 5], &list);
+    /// assert_eq!(linked_list![1, 2, 3, 5], list);
     /// ```
     pub fn remove(&mut self, at: usize) -> T {
         let owner = unsafe { self.get_nth_owner(at) };
@@ -649,8 +649,8 @@ impl<T> List<T> {
     /// let mut list = linked_list![1, 2, 3, 4, 5, 6];
     /// let split = list.split_off(4);
     ///
-    /// assert_eq!(&linked_list![1, 2, 3, 4], &list);
-    /// assert_eq!(&linked_list![5, 6], &split);
+    /// assert_eq!(linked_list![1, 2, 3, 4], list);
+    /// assert_eq!(linked_list![5, 6], split);
     /// ```
     pub fn split_off(&mut self, at: usize) -> Self {
         unsafe { self.split_off_impl(at) }
