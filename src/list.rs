@@ -792,7 +792,7 @@ impl<T> From<Cons<T, List<T>>> for List<T> {
 
 impl<T, const N: usize> From<[T; N]> for List<T> {
     fn from(array: [T; N]) -> Self {
-        IntoIterator::into_iter(array).collect()
+        array.into_iter().collect()
     }
 }
 
