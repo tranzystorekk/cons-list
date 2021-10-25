@@ -32,8 +32,12 @@ macro_rules! linked_list {
         let e = $el;
         let size = $n;
         let mut result = $crate::List::new();
-        for _ in 0..size {
-            result.push_front(e.clone());
+
+        if size > 0 {
+            for _ in 0..(size - 1) {
+                result.push_front(e.clone());
+            }
+            result.push_front(e);
         }
 
         result
