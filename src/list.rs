@@ -315,10 +315,9 @@ impl<T> List<T> {
         };
         let new_packed = Some(Box::new(new_node));
 
-        match self.last_node_mut() {
-            Some(node) => node.next = new_packed,
-            _ => self.head = new_packed,
-        }
+        let owner = unsafe { self.get_empty_owner() };
+
+        *owner = new_packed;
     }
 
     /// Inserts an element at the given position.
@@ -379,10 +378,9 @@ impl<T> List<T> {
 
         let other_head = other.head.take();
 
-        match self.last_node_mut() {
-            Some(node) => node.next = other_head,
-            _ => self.head = other_head,
-        }
+        let owner = unsafe { self.get_empty_owner() };
+
+        *owner = other_head;
     }
 
     /// Moves all elements from `other` to the front of the `List`.
@@ -407,7 +405,9 @@ impl<T> List<T> {
     /// assert_eq!(linked_list![1, 2, 3, 4, 5, 6], list);
     /// ```
     pub fn prepend(&mut self, other: &mut List<T>) {
-        if let Some(node) = other.last_node_mut() {
+        let other_owner = unsafe { other.get_last_owner() };
+
+        if let Some(node) = other_owner.as_deref_mut() {
             node.next = self.head.take();
             self.head = other.head.take();
         }
@@ -719,10 +719,6 @@ impl<T> List<T> {
             self.head = node.next.take();
             node
         })
-    }
-
-    fn last_node_mut(&mut self) -> Option<&mut Node<T>> {
-        unsafe { self.get_last_owner().as_deref_mut() }
     }
 }
 
