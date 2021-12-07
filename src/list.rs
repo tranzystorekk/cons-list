@@ -315,7 +315,7 @@ impl<T> List<T> {
         };
         let new_packed = Some(Box::new(new_node));
 
-        let owner = unsafe { self.get_empty_owner() };
+        let owner = unsafe { self.empty_owner() };
 
         *owner = new_packed;
     }
@@ -340,7 +340,7 @@ impl<T> List<T> {
     /// assert_eq!(linked_list![1, 2, 3, 4, 5, 6], list);
     /// ```
     pub fn insert(&mut self, at: usize, value: T) {
-        let nth = unsafe { self.get_nth_owner(at) };
+        let nth = unsafe { self.nth_owner(at) };
 
         let new_node = Node {
             value,
@@ -378,7 +378,7 @@ impl<T> List<T> {
 
         let other_head = other.head.take();
 
-        let owner = unsafe { self.get_empty_owner() };
+        let owner = unsafe { self.empty_owner() };
 
         *owner = other_head;
     }
@@ -405,7 +405,7 @@ impl<T> List<T> {
     /// assert_eq!(linked_list![1, 2, 3, 4, 5, 6], list);
     /// ```
     pub fn prepend(&mut self, other: &mut List<T>) {
-        let other_owner = unsafe { other.get_last_owner() };
+        let other_owner = unsafe { other.last_owner() };
 
         if let Some(node) = other_owner.as_deref_mut() {
             node.next = self.head.take();
@@ -610,7 +610,7 @@ impl<T> List<T> {
     }
 
     unsafe fn pop_back_impl(&mut self) -> Option<T> {
-        self.get_last_owner().take().map(|node| node.value)
+        self.last_owner().take().map(|node| node.value)
     }
 
     /// Removes and returns the element at the given index.
@@ -630,7 +630,7 @@ impl<T> List<T> {
     /// assert_eq!(linked_list![1, 2, 3, 5], list);
     /// ```
     pub fn remove(&mut self, at: usize) -> T {
-        let owner = unsafe { self.get_nth_owner(at) };
+        let owner = unsafe { self.nth_owner(at) };
 
         let mut node = owner.take().expect("illegal access past list bounds");
         *owner = node.next.take();
@@ -662,11 +662,11 @@ impl<T> List<T> {
 
     unsafe fn split_off_impl(&mut self, at: usize) -> Self {
         Self {
-            head: self.get_nth_owner(at).take(),
+            head: self.nth_owner(at).take(),
         }
     }
 
-    unsafe fn get_nth_owner(&mut self, n: usize) -> &mut Link<T> {
+    unsafe fn nth_owner(&mut self, n: usize) -> &mut Link<T> {
         let mut cur: *mut _ = &mut self.head;
 
         for _ in 0..n {
@@ -679,7 +679,7 @@ impl<T> List<T> {
         &mut *cur
     }
 
-    unsafe fn get_last_owner(&mut self) -> &mut Link<T> {
+    unsafe fn last_owner(&mut self) -> &mut Link<T> {
         let mut cur: *mut _ = &mut self.head;
 
         while let Some(node) = (*cur).as_deref_mut() {
@@ -693,7 +693,7 @@ impl<T> List<T> {
         &mut *cur
     }
 
-    unsafe fn get_empty_owner(&mut self) -> &mut Link<T> {
+    unsafe fn empty_owner(&mut self) -> &mut Link<T> {
         let mut cur: *mut _ = &mut self.head;
 
         while let Some(node) = (*cur).as_deref_mut() {
@@ -704,7 +704,7 @@ impl<T> List<T> {
     }
 
     unsafe fn extend_from_iter<I: Iterator<Item = T>>(&mut self, iter: I) {
-        let mut owner = self.get_empty_owner();
+        let mut owner = self.empty_owner();
 
         for value in iter {
             let new_node = Node { value, next: None };
