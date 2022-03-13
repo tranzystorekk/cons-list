@@ -869,7 +869,7 @@ impl<'a, T> IntoIterator for &'a mut List<T> {
 }
 
 impl<'a, T> Iter<'a, T> {
-    pub fn from(list: &'a List<T>) -> Self {
+    fn from(list: &'a List<T>) -> Self {
         Self {
             current_node: list.head.as_deref(),
         }
@@ -877,7 +877,7 @@ impl<'a, T> Iter<'a, T> {
 }
 
 impl<'a, T> IterMut<'a, T> {
-    pub fn from(list: &'a mut List<T>) -> Self {
+    fn from(list: &'a mut List<T>) -> Self {
         Self {
             current_node: list.head.as_deref_mut(),
         }
@@ -885,7 +885,7 @@ impl<'a, T> IterMut<'a, T> {
 }
 
 impl<'a, T, F: FnMut(&mut T) -> bool> DrainFilter<'a, T, F> {
-    pub fn from(list: &'a mut List<T>, pred: F) -> Self {
+    fn from(list: &'a mut List<T>, pred: F) -> Self {
         Self {
             owner: &mut list.head,
             pred,
