@@ -986,20 +986,22 @@ impl<'a, T: fmt::Debug> fmt::Debug for Iter<'a, T> {
 
 impl<'a, T: fmt::Debug> fmt::Debug for IterMut<'a, T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_tuple("IterMut")
-            .field(&DebugIter(Iter {
-                current_node: self.current_node.as_deref(),
-            }))
-            .finish()
+        let iter = Iter {
+            current_node: self.current_node.as_deref(),
+        };
+
+        f.debug_tuple("IterMut").field(&DebugIter(iter)).finish()
     }
 }
 
 impl<'a, T: fmt::Debug, F: FnMut(&mut T) -> bool> fmt::Debug for DrainFilter<'a, T, F> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let iter = Iter {
+            current_node: self.owner.as_deref(),
+        };
+
         f.debug_tuple("DrainFilter")
-            .field(&DebugIter(Iter {
-                current_node: self.owner.as_deref(),
-            }))
+            .field(&DebugIter(iter))
             .finish()
     }
 }
