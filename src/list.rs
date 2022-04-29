@@ -753,13 +753,13 @@ impl<T: Clone> Clone for List<T> {
     }
 
     fn clone_from(&mut self, source: &Self) {
-        unsafe {
+
             let mut owner: *mut _ = &mut self.head;
             let mut iter_other = source.iter();
 
             // clone into existing nodes in-place
-            while let Some((node, elem)) =
-                Iterator::zip((*owner).iter_mut(), iter_other.by_ref()).next()
+            while let Some((node, elem)) = unsafe {
+                Iterator::zip((*owner).iter_mut(), iter_other.by_ref()).next()}
             {
                 node.value.clone_from(elem);
                 owner = &mut node.next;
@@ -769,10 +769,10 @@ impl<T: Clone> Clone for List<T> {
             for value in iter_other.cloned() {
                 let new_node = Node { value, next: None };
 
-                let node_in_place = (*owner).insert(Box::new(new_node));
+                let node_in_place = unsafe {(*owner).insert(Box::new(new_node))};
                 owner = &mut node_in_place.next;
             }
-
+        unsafe {
             // drop unneeded nodes
             let _ = Self {
                 head: (*owner).take(),
