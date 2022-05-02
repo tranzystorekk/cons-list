@@ -771,12 +771,11 @@ impl<T: Clone> Clone for List<T> {
             let node_in_place = unsafe { (*owner).insert(Box::new(new_node)) };
             owner = &mut node_in_place.next;
         }
-        unsafe {
-            // drop unneeded nodes
-            let _ = Self {
-                head: (*owner).take(),
-            };
-        }
+
+        // drop unneeded nodes
+        let _ = Self {
+            head: unsafe { (*owner).take() },
+        };
     }
 }
 
