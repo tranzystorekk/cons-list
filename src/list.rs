@@ -753,25 +753,24 @@ impl<T: Clone> Clone for List<T> {
     }
 
     fn clone_from(&mut self, source: &Self) {
+        let mut owner: *mut _ = &mut self.head;
+        let mut iter_other = source.iter();
 
-            let mut owner: *mut _ = &mut self.head;
-            let mut iter_other = source.iter();
+        // clone into existing nodes in-place
+        while let Some((node, elem)) =
+            unsafe { Iterator::zip((*owner).iter_mut(), iter_other.by_ref()).next() }
+        {
+            node.value.clone_from(elem);
+            owner = &mut node.next;
+        }
 
-            // clone into existing nodes in-place
-            while let Some((node, elem)) = unsafe {
-                Iterator::zip((*owner).iter_mut(), iter_other.by_ref()).next()}
-            {
-                node.value.clone_from(elem);
-                owner = &mut node.next;
-            }
+        // allocate missing nodes
+        for value in iter_other.cloned() {
+            let new_node = Node { value, next: None };
 
-            // allocate missing nodes
-            for value in iter_other.cloned() {
-                let new_node = Node { value, next: None };
-
-                let node_in_place = unsafe {(*owner).insert(Box::new(new_node))};
-                owner = &mut node_in_place.next;
-            }
+            let node_in_place = unsafe { (*owner).insert(Box::new(new_node)) };
+            owner = &mut node_in_place.next;
+        }
         unsafe {
             // drop unneeded nodes
             let _ = Self {
