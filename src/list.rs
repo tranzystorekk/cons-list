@@ -475,7 +475,7 @@ impl<T> List<T> {
     /// assert_eq!(iter.next(), None);
     /// ```
     pub fn iter(&self) -> Iter<'_, T> {
-        Iter::from(self)
+        Iter::new(self)
     }
 
     /// Returns a forward iterator with mutable references.
@@ -494,7 +494,7 @@ impl<T> List<T> {
     /// assert_eq!(linked_list![11, 12, 13, 14], list);
     /// ```
     pub fn iter_mut(&mut self) -> IterMut<'_, T> {
-        IterMut::from(self)
+        IterMut::new(self)
     }
 
     /// Returns `true` if the `List` contains an element equal to the given value.
@@ -540,7 +540,7 @@ impl<T> List<T> {
     /// assert_eq!(linked_list![5, 8, 9], list);
     /// ```
     pub fn drain_filter<F: FnMut(&mut T) -> bool>(&mut self, pred: F) -> DrainFilter<'_, T, F> {
-        DrainFilter::from(self, pred)
+        DrainFilter::new(self, pred)
     }
 
     /// Remove and discard from the `List` all elements for which the predicate evaluates to `true`.
@@ -867,7 +867,7 @@ impl<'a, T> IntoIterator for &'a mut List<T> {
 }
 
 impl<'a, T> Iter<'a, T> {
-    fn from(list: &'a List<T>) -> Self {
+    fn new(list: &'a List<T>) -> Self {
         Self {
             current_node: list.head.as_deref(),
         }
@@ -875,7 +875,7 @@ impl<'a, T> Iter<'a, T> {
 }
 
 impl<'a, T> IterMut<'a, T> {
-    fn from(list: &'a mut List<T>) -> Self {
+    fn new(list: &'a mut List<T>) -> Self {
         Self {
             current_node: list.head.as_deref_mut(),
         }
@@ -883,7 +883,7 @@ impl<'a, T> IterMut<'a, T> {
 }
 
 impl<'a, T, F: FnMut(&mut T) -> bool> DrainFilter<'a, T, F> {
-    fn from(list: &'a mut List<T>, pred: F) -> Self {
+    fn new(list: &'a mut List<T>, pred: F) -> Self {
         Self {
             owner: &mut list.head,
             pred,
