@@ -340,7 +340,7 @@ impl<T> List<T> {
     /// assert_eq!(linked_list![1, 2, 3, 4, 5, 6], list);
     /// ```
     pub fn insert(&mut self, at: usize, value: T) {
-        let nth = unsafe { self.nth_owner(at) };
+        let nth = self.nth_owner(at);
 
         let new_node = Node {
             value,
@@ -630,7 +630,7 @@ impl<T> List<T> {
     /// assert_eq!(linked_list![1, 2, 3, 5], list);
     /// ```
     pub fn remove(&mut self, at: usize) -> T {
-        let owner = unsafe { self.nth_owner(at) };
+        let owner = self.nth_owner(at);
 
         let mut node = owner.take().expect("illegal access past list bounds");
         *owner = node.next.take();
@@ -657,26 +657,20 @@ impl<T> List<T> {
     /// assert_eq!(linked_list![5, 6], split);
     /// ```
     pub fn split_off(&mut self, at: usize) -> Self {
-        unsafe { self.split_off_impl(at) }
-    }
-
-    unsafe fn split_off_impl(&mut self, at: usize) -> Self {
         Self {
             head: self.nth_owner(at).take(),
         }
     }
 
-    unsafe fn nth_owner(&mut self, n: usize) -> &mut Link<T> {
-        let mut cur: *mut _ = &mut self.head;
+    fn nth_owner(&mut self, n: usize) -> &mut Link<T> {
+        let mut cur = &mut self.head;
 
         for _ in 0..n {
-            let node = (*cur)
-                .as_deref_mut()
-                .expect("illegal access past list bounds");
+            let node = cur.as_deref_mut().expect("illegal access past list bounds");
             cur = &mut node.next;
         }
 
-        &mut *cur
+        cur
     }
 
     unsafe fn last_owner(&mut self) -> &mut Link<T> {
@@ -703,8 +697,8 @@ impl<T> List<T> {
         &mut *cur
     }
 
-    unsafe fn extend_from_iter<I: Iterator<Item = T>>(&mut self, iter: I) {
-        let mut owner = self.empty_owner();
+    fn extend_from_iter<I: Iterator<Item = T>>(&mut self, iter: I) {
+        let mut owner = unsafe { self.empty_owner() };
 
         for value in iter {
             let new_node = Node { value, next: None };
@@ -724,17 +718,13 @@ impl<T> List<T> {
 
 impl<T> Extend<T> for List<T> {
     fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
-        unsafe {
-            self.extend_from_iter(iter.into_iter());
-        }
+        self.extend_from_iter(iter.into_iter());
     }
 }
 
 impl<'a, T: 'a + Copy> Extend<&'a T> for List<T> {
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
-        unsafe {
-            self.extend_from_iter(iter.into_iter().copied());
-        }
+        self.extend_from_iter(iter.into_iter().copied());
     }
 }
 
