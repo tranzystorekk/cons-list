@@ -1010,8 +1010,6 @@ impl<T, F: FnMut(&mut T) -> bool> FusedIterator for DrainFilter<'_, T, F> {}
 #[cfg(test)]
 mod tests {
     use super::List;
-    use crate::cons::Cons;
-    use crate::head_matches;
 
     #[test]
     fn new_list_is_empty() {
@@ -1107,32 +1105,6 @@ mod tests {
     }
 
     #[test]
-    fn list_can_be_consed() {
-        let l = linked_list![1];
-
-        assert!(matches!(l.cons(), Cons::Cons(1, _)));
-    }
-
-    #[test]
-    fn tail_can_be_consed() {
-        let l = linked_list![1, 2, 3];
-
-        let tail = l
-            .cons()
-            .into_tail()
-            .map(|list| list.into_iter().collect::<Vec<i32>>());
-
-        assert_eq!(tail, Some(vec![2, 3]));
-    }
-
-    #[test]
-    fn no_tail_when_consing_one_element_list() {
-        let l = linked_list![1];
-
-        assert!(matches!(l.cons().into_tail(), None));
-    }
-
-    #[test]
     fn list_can_be_iterated() {
         let l = linked_list![1, 2, 3];
 
@@ -1179,13 +1151,6 @@ mod tests {
 
         let expected = [1, 2, 3];
         itertools::assert_equal(expected, l);
-    }
-
-    #[test]
-    fn cons_head_matches() {
-        let l = linked_list![Some(1), None, Some(3)];
-
-        assert!(head_matches!(l.cons(), Some(1)));
     }
 
     #[test]

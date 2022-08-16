@@ -299,3 +299,42 @@ impl<T, L> Cons<T, L> {
         matches!(self, Cons::Nil)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Cons;
+    use crate::linked_list;
+
+    #[test]
+    fn cons_head_matches() {
+        let l = linked_list![Some(1), None, Some(3)];
+
+        assert!(head_matches!(l.cons(), Some(1)));
+    }
+
+    #[test]
+    fn list_can_be_consed() {
+        let l = linked_list![1];
+
+        assert!(matches!(l.cons(), Cons::Cons(1, _)));
+    }
+
+    #[test]
+    fn tail_can_be_consed() {
+        let l = linked_list![1, 2, 3];
+
+        let tail = l
+            .cons()
+            .into_tail()
+            .map(|list| list.into_iter().collect::<Vec<i32>>());
+
+        assert_eq!(tail, Some(vec![2, 3]));
+    }
+
+    #[test]
+    fn no_tail_when_consing_one_element_list() {
+        let l = linked_list![1];
+
+        assert!(matches!(l.cons().into_tail(), None));
+    }
+}
