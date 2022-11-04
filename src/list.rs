@@ -449,13 +449,10 @@ impl<T> List<T> {
     /// assert_eq!(Some(&linked_list![2, 3, 4, 5,]), cons.as_tail());
     /// ```
     pub fn cons(mut self) -> LCons<T> {
-        match self.head.take() {
-            Some(node) => {
-                let tail = Self { head: node.next };
-                Cons::Cons(node.value, tail)
-            }
-            _ => Cons::Nil,
-        }
+        let Some(node) = self.head.take() else { return Cons::Nil; };
+        let tail = Self { head: node.next };
+
+        Cons::Cons(node.value, tail)
     }
 
     /// Returns a forward iterator.
